@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "4"
+    local version = "5"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -79,7 +79,7 @@ champions2 = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true"},        
     }},
         ["Malphite"] = {charName = "Malphite", skillshots = {
-        ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 250, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 1800, range = 1000, radius = 160, type="circular", cc = "true"},    
+        ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 250, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 1800, range = 1000, radius = 325, type="circular", cc = "true"},    
     }},
     ["Ezreal"] = {charName = "Ezreal", skillshots = {
         ["Mystic Shot"]             = {name = "Mystic Shot",      spellName = "EzrealMysticShot",      spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
@@ -311,10 +311,30 @@ end
         isKassadin = true
         dashrange = 700
     end
+    isLeblanc = false
+    if myHero.charName == "Leblanc" then 
+        isLeblanc = true
+        dashrange = 600
+    end
     isRiven = false
     if myHero.charName == "Riven" then 
         isRiven = true
         dashrange = 325
+    end
+    isFizz = false
+    if myHero.charName == "Fizz" then 
+        isFizz = true
+        dashrange = 400
+    end
+    isShen = false
+    if myHero.charName == "Shen" then 
+        isShen = true
+        dashrange = 600
+    end
+    isShaco = false
+    if myHero.charName == "Shaco" then 
+        isShaco = true
+        dashrange = 400
     end
     isRenekton = false          
     if myHero.charName == "Renekton" then 
@@ -325,6 +345,11 @@ end
     if myHero.charName == "Tristana" then 
         isTristana = true
         dashrange = 900
+    end
+    isTryndamere = false
+    if myHero.charName == "Tryndamere" then 
+        isTryndamere = true
+        dashrange = 660
     end
     isCorki = false
     if myHero.charName == "Corki" then 
@@ -848,13 +873,23 @@ if GoodEvadeConfig.resetdodge then
     stopEvade()
     detectedSkillshots = {}
 end
-if AutoCarry ~= nil then if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
+if AutoCarry ~= nil then 
+if AutoCarry.MainMenu.AutoCarry ~= nil then 
+if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
         then
         if lastset < GetTickCount()
      then   lastMovement.destination = Point2(mousePos.x, mousePos.z)
         lastset = GetTickCount() + 100
         end
     end
+elseif AutoCarry.Keys.AutoCarry ~= nil then
+if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
+        if lastset < GetTickCount() then 
+		lastMovement.destination = Point2(mousePos.x, mousePos.z)
+        lastset = GetTickCount() + 100
+        end
+end
+end
 end
 if evading then
     for i, detectedSkillshot in pairs(detectedSkillshots) do
@@ -1021,8 +1056,23 @@ function DashTo(x, y)
     if isKassadin and myHero:CanUseSpell(_R) == READY then
         CastSpell(_R, x, y)
     end
+    if isLeblanc and myHero:CanUseSpell(_W) == READY then
+        CastSpell(_W, x, y)
+    end
+    if isFizz and myHero:CanUseSpell(_E) == READY then
+        CastSpell(_E, x, y)
+    end
+    if isShaco and myHero:CanUseSpell(_Q) == READY then
+        CastSpell(_Q, x, y)
+    end
+    if isTryndamere and myHero:CanUseSpell(_E) == READY then
+        CastSpell(_E, x, y)
+    end
     if isCorki and myHero:CanUseSpell(_W) == READY then
         CastSpell(_W, x, y)
+    end
+    if isShen and myHero:CanUseSpell(_E) == READY then
+        CastSpell(_E, x, y)
     end 
     if isRenekton and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
@@ -1048,11 +1098,31 @@ function NeedDash(skillshot, forceDash)
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
     end
+    if isTryndamere and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+        if forceDash or hp < 0.4 then return true end
+        if _isDangerSkillshot(skillshot) then return true end
+    end
+    if isShaco and myHero:CanUseSpell(_Q) == READY and skillshot.skillshot.cc == "true" then
+        if skillshot or hp < 0.4 then return true end
+        if _isDangerSkillshot(skillshot) then return true end
+    end
     if isEzreal and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
     end
+    if isFizz and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+        if skillshot or hp < 0.4 then return true end
+        if _isDangerSkillshot(skillshot) then return true end
+    end
+    if isShen and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+        if forceDash or hp < 0.4 then return true end
+        if _isDangerSkillshot(skillshot) then return true end
+    end
     if isKassadin and myHero:CanUseSpell(_R) == READY and skillshot.skillshot.cc == "true" then
+        if forceDash or hp < 0.4 then return true end
+        if _isDangerSkillshot(skillshot) then return true end
+    end
+    if isLeblanc and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
     end
