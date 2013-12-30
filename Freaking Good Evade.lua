@@ -5,7 +5,7 @@ require "old2dgeo"
     --[[AutoUpdate Settings]]
     local version = "4"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
-    local URL = "https://bitbucket.org/honda7/bol/raw/master/ProTracker.lua"
+    local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/Freaking%20Good%20Evade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
 
     function Update()
