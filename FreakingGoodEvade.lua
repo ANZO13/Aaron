@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "4"
+    local version = "3"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/Freaking%20Good%20Evade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -26,7 +26,7 @@ require "old2dgeo"
                     if send then
                         Version = tonumber(string.sub(content, sstart+1, send-1))
                     end
-                    if (Version ~= nil) and (Version > tonumber(version)) and content:find("--EOS--") then
+                    if (Version ~= nil) and (Version > tonumber(version)) then
                         file = io.open(SELF, "w")
                         if file then
                             file:write(content)
@@ -47,7 +47,7 @@ _G.evade = false
 evadeBuffer = 15 -- expand the dangerous area (safer evades in laggy situations)
 moveBuffer = 25 -- additional movement distance (champions stop a few pixels before their destination)
 smoothing = 75 -- make movements smoother by moving further between evasion phases
-dashrange = nil
+dashrange = 0
 
 
 champions = {}
