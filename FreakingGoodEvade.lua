@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "5"
+    local version = "6"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -764,9 +764,12 @@ function OnCreateObj(object)
                             return
                         end
                     end
-                        if object.team == myHero.team then
+                    for i = 1, heroManager.iCount, 1 do
+                        currentHero = heroManager:GetHero(i)
+                        if currentHero.team == myHero.team and skillShotChampion.charName == currentHero.charName then
                             return
                         end
+                    end
 
                     startPosition = Point2(object.x, object.z)
                     if skillshot.cc == "true" or (nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
