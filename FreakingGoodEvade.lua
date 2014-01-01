@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "6"
+    local version = "7"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -79,7 +79,7 @@ champions2 = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true"},        
     }},
         ["Malphite"] = {charName = "Malphite", skillshots = {
-        ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 250, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 1800, range = 1000, radius = 325, type="circular", cc = "true"},    
+        ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 250, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 1900, range = 1000, radius = 300, type="circular", cc = "true"},    
     }},
     ["Ezreal"] = {charName = "Ezreal", skillshots = {
         ["Mystic Shot"]             = {name = "Mystic Shot",      spellName = "EzrealMysticShot",      spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
@@ -146,7 +146,7 @@ champions2 = {
         ["Boomerang Blade"] = {name = "Boomerang Blade", spellName = "SivirQ", spellDelay = 250, projectileName = "Sivir_Base_Q_mis.troy", projectileSpeed = 1350, range = 1175, radius = 101, type = "line", cc = "false"},
     }},
     ["Ashe"] = {charName = "Ashe", skillshots = {
-        ["Enchanted Arrow"] = {name = "Enchanted Arrow", spellName = "EnchantedCrystalArrow", spellDelay = 250, projectileName = "EnchantedCrystalArrow_mis.troy", projectileSpeed = 1600, range = 25000, radius = 130, type = "line", cc = "true"},
+        ["Enchanted Arrow"] = {name = "Enchanted Arrow", spellName = "EnchantedCrystalArrow", spellDelay = 250, projectileName = "EnchantedCrystalArrow_mis.troy", projectileSpeed = 1600, range = 25000, radius = 120, type = "line", cc = "true"},
     }},
     ["KogMaw"] = {charName = "KogMaw", skillshots = {
         ["Living Artillery"] = {name = "Living Artillery", spellName = "KogMawLivingArtillery", spellDelay = 250, projectileName = "KogMawLivingArtillery_mis.troy", projectileSpeed = 1050, range = 2200, radius = 225, type = "circular", cc = "false"}
@@ -264,6 +264,9 @@ lastset = 0
 trueWidth = {}
 trueSpeed = {}
 trueDelay = {}
+haveflash = false
+flashSlot = nil
+flashready = false
 
 -- Code ------------------------------------------------------------------------
 function getTarget(targetId)
@@ -288,6 +291,7 @@ function OnLoad()
         end
     end
 end
+
 
     stopEvade()
 
@@ -360,7 +364,15 @@ end
     if myHero.charName == "Lucian" then 
         isLucian = true
         dashrange = 425
-    end 
+    end
+        if myHero:GetSpellData(SUMMONER_1).name:find("SummonerFlash") then 
+        haveflash = true
+        flashSlot = SUMMONER_1
+    elseif myHero:GetSpellData(SUMMONER_2).name:find("SummonerFlash") then 
+        flashSlot = SUMMONER_2
+        haveflash = true
+    end
+    if haveflash and dashrange < 400 then dashrange = 400 end
 
     lastMovement = {
         destination = Point2(myHero.x, myHero.z),
@@ -378,6 +390,19 @@ end
     GoodEvadeConfig:addParam("dodgeCConly2", "Dodge CC only spells toggle", SCRIPT_PARAM_ONKEYTOGGLE, false, 77)
     GoodEvadeConfig:addParam("resetdodge", "Reset Dodge", SCRIPT_PARAM_ONKEYDOWN, false, 17)
     GoodEvadeConfig:permaShow("dodgeEnabled")
+	
+GoodEvadeSkillshotConfig = scriptConfig("Good Evade skillshots", "goodEvade skillshot config")
+for i, skillShotChampion in pairs(champions) do
+for i, skillshot in pairs(skillShotChampion.skillshots) do
+                    name = tostring(skillshot.spellName)
+					name2 = tostring(skillshot.name)
+                    if skillshot.cc == "true" then
+GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 2, 0, 2, 0)
+elseif skillshot.cc == "false" then GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 1, 0, 2, 0)
+elseif skillshot.cc == "never" then GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 0, 0, 2, 0)
+end
+end
+end
 
     for i = 1, heroManager.iCount do
         local hero = heroManager:GetHero(i)
@@ -402,7 +427,7 @@ end
 
     GoodEvadeConfig.dodgeEnabled = true
 
-    PrintChat(" >> Freaking Good Evade v4 loaded")
+    PrintChat(" >> Freaking Good Evade v"..version.." loaded")
         if AutoUpdate then
         DelayAction(Update, 10)
     end
@@ -491,18 +516,72 @@ function dodgeCircularShot(skillshot)
     if closestPoint ~= nil then
         closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
         evadeTo(closestPoint.x, closestPoint.y)
-    elseif NeedDash(skillshot, true) then
-        if not evading then
-            -- CAN NOT EVADE - STILL TRY IT
-            --safeTarget = safeTarget + (safeTarget - heroPosition):normalized() * smoothing
-            evadeTo(safeTarget.x, safeTarget.y, true)
+    elseif NeedDash(skillshot, true) and dashrange ~= 0 then
+
+    heroPosition = Point2(myHero.x, myHero.z)
+
+    moveableDistance = (myHero.ms * math.max(skillshot.endTick - GetTickCount() - GetLatency(), 0) / 1000) + dashrange
+    evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
+
+    safeTarget = skillshot.endPosition + (heroPosition - skillshot.endPosition):normalized() * evadeRadius
+
+    if getLastMovementDestination():distance(skillshot.endPosition) <= evadeRadius then
+        closestTarget = skillshot.endPosition + (getLastMovementDestination() - skillshot.endPosition):normalized() * evadeRadius
+    else
+        closestTarget = nil
+    end
+        
+    lineDistance = Line2(heroPosition, getLastMovementDestination()):distance(skillshot.endPosition)
+    directionTarget = heroPosition + (getLastMovementDestination() - heroPosition):normalized() * (math.sqrt(heroPosition:distance(skillshot.endPosition)^2 - lineDistance^2) + math.sqrt(evadeRadius^2 - lineDistance^2))
+    if directionTarget:distance(skillshot.endPosition) >= evadeRadius + 1 then
+        directionTarget = heroPosition + (getLastMovementDestination() - heroPosition):normalized() * (math.sqrt(evadeRadius^2 - lineDistance^2) - math.sqrt(heroPosition:distance(skillshot.endPosition)^2 - lineDistance^2))
+    end
+
+    possibleMovementTargets = {}
+    intersectionPoints = Circle2(skillshot.endPosition, evadeRadius):intersectionPoints(Circle2(heroPosition, moveableDistance))
+    if #intersectionPoints == 2 then
+        leftTarget = intersectionPoints[1]
+        rightTarget = intersectionPoints[2]
+
+        local theta = ((-skillshot.endPosition + leftTarget):polar() - (-skillshot.endPosition + rightTarget):polar()) % 360
+        if ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, directionTarget) 
+            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) 
+            and getSideOfLine(skillshot.endPosition, rightTarget, directionTarget) 
+            == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)) 
+        or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, directionTarget) 
+            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) 
+            or getSideOfLine(skillshot.endPosition, rightTarget, directionTarget) 
+            == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)))) then
+            table.insert(possibleMovementTargets, directionTarget)
+        end
+
+        --[[if closestTarget and ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, closestTarget) == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) and getSideOfLine(skillshot.endPosition, rightTarget, closestTarget) == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)) or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, closestTarget) == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) or getSideOfLine(skillshot.endPosition, rightTarget, closestTarget) == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)))) then
+            table.insert(possibleMovementTargets, closestTarget)
+        end]]
+
+        table.insert(possibleMovementTargets, safeTarget)
+        table.insert(possibleMovementTargets, leftTarget)
+        table.insert(possibleMovementTargets, rightTarget)
+    else
+        if skillshot.skillshot.radius <= moveableDistance then
+            table.insert(possibleMovementTargets, closestTarget)
+            table.insert(possibleMovementTargets, directionTarget)
+            table.insert(possibleMovementTargets, safeTarget)
         end
     end
+
+    closestPoint = findBestDirection(skillshot, getLastMovementDestination(), possibleMovementTargets)
+    if closestPoint ~= nil then
+        closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
+        evadeTo(closestPoint.x, closestPoint.y, true)
+    end
 end
+    end
 
 function dodgeLineShot(skillshot)
     heroPosition = Point2(myHero.x, myHero.z)
-
+    local evadeTo1
+    local evadeTo2
     skillshot.evading = true
 
     skillshotLine = Line2(skillshot.startPosition, skillshot.endPosition)
@@ -619,11 +698,19 @@ function dodgeLineShot(skillshot)
             end
         end
         evadeTo(evadeTarget.x, evadeTarget.y)
-    elseif NeedDash(skillshot, true) then
-        -- USE SPELLSHIELDS AND ABILITES TO EVADE
-        evadeTo(safeTarget.x, safeTarget.y, true)
-    end
+  elseif NeedDash(skillshot, true)
+  then if (evadeTo1:distance(lastMovement.destination) > evadeTo2:distance(lastMovement.destination)) and not InsideTheWall(evadeTo2) then
+  safeTarget = evadeTo2
+  elseif (evadeTo2:distance(lastMovement.destination) > evadeTo1:distance(lastMovement.destination)) and not InsideTheWall(evadeTo1) then
+    safeTarget = evadeTo1
+  elseif InsideTheWall(evadeTo2) then
+    safeTarget = evadeTo1
+  elseif InsideTheWall(evadeTo1) then
+    safeTarget = evadeTo2
+  end
+  	evadeTo(safeTarget.x, safeTarget.y, true)
 end
+end---------------------------
 
 function _isDangerSkillshot(skillshot)
         if skillshot.skillshot.name == "LeonaZenithBlade" 
@@ -645,6 +732,17 @@ function _isDangerSkillshot(skillshot)
     else
         return false
     end 
+end
+
+function isreallydangerous(skillshot)
+if skillshot.skillshot.name == "UFSlash"
+or skillshot.skillshot.name == "Crescendo"
+or skillshot.skillshot.name == "Fizz ULT"
+or skillshot.skillshot.name == "Enchanted Arrow"
+then return true
+else
+return false
+end
 end
 
 function InsideTheWall(evadeTestPoint)
@@ -709,9 +807,41 @@ function calculateLongitudinalApproachLength(skillshot, d)
     return -1
 end
 
+function calculateLongitudinalApproachLength2(skillshot, d)
+    v1 = skillshot.skillshot.projectileSpeed
+    v2 = myHero.ms + (dashrange * 4)
+    longitudinalDistance = math.max(skillshotPosition(skillshot, GetTickCount()):distance(getPerpendicularFootpoint(skillshot.startPosition, skillshot.endPosition, Point2(myHero.x, myHero.z))) - hitboxSize / 2 - skillshot.skillshot.radius, 0)  + v1 * math.max(skillshot.startTick - GetTickCount(), 0) / 1000
+
+    preResult = -d^2 * v1^4 + d^2 * v2^2 * v1^2 + longitudinalDistance^2 * v2^2 * v1^2
+    if preResult >= 0 then
+        result = (math.sqrt(preResult) - longitudinalDistance * v2^2) / (v1^2 - v2^2)
+        if result >= 0 then
+            return result
+        end
+    end
+
+    return -1
+end
+
 function calculateLongitudinalRetreatLength(skillshot, d)
     v1 = skillshot.skillshot.projectileSpeed
     v2 = myHero.ms
+    longitudinalDistance = math.max(skillshotPosition(skillshot, GetTickCount()):distance(getPerpendicularFootpoint(skillshot.startPosition, skillshot.endPosition, Point2(myHero.x, myHero.z))) - hitboxSize / 2 - skillshot.skillshot.radius, 0) + v1 * math.max(skillshot.startTick - GetTickCount(), 0) / 1000
+
+    preResult = -d^2 * v1^4 + d^2 * v2^2 * v1^2 + longitudinalDistance^2 * v2^2 * v1^2
+    if preResult >= 0 then
+        result = (math.sqrt(preResult) + longitudinalDistance * v2^2) / (v1^2 - v2^2)
+        if result >= 0 then
+            return result
+        end
+    end
+
+    return -1
+end
+
+function calculateLongitudinalRetreatLength2(skillshot, d)
+    v1 = skillshot.skillshot.projectileSpeed
+    v2 = myHero.ms + (dashrange * 4)
     longitudinalDistance = math.max(skillshotPosition(skillshot, GetTickCount()):distance(getPerpendicularFootpoint(skillshot.startPosition, skillshot.endPosition, Point2(myHero.x, myHero.z))) - hitboxSize / 2 - skillshot.skillshot.radius, 0) + v1 * math.max(skillshot.startTick - GetTickCount(), 0) / 1000
 
     preResult = -d^2 * v1^4 + d^2 * v2^2 * v1^2 + longitudinalDistance^2 * v2^2 * v1^2
@@ -743,6 +873,7 @@ end
 function OnDeleteObj(object)
     if object ~= nil and object.type == "obj_GeneralParticleEmmiter" then
         for i, detectedSkillshot in ipairs(detectedSkillshots) do
+				if detectedSkillshot.skillshot.type == "line" then
             if detectedSkillshot.skillshot.projectileName == object.name then
             table.remove(detectedSkillshots, i)
             i = i-1
@@ -753,11 +884,12 @@ function OnDeleteObj(object)
         end
     end
 end
+end
 function OnCreateObj(object)
     if object ~= nil and object.type == "obj_GeneralParticleEmmiter" then
         for i, skillShotChampion in pairs(champions) do
             for i, skillshot in pairs(skillShotChampion.skillshots) do
-                if skillshot.cc == "true" then
+                if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 then
                 if skillshot.projectileName == object.name then
                     for i, detectedSkillshot in pairs(detectedSkillshots) do
                         if detectedSkillshot.skillshot.projectileName == skillshot.projectileName then
@@ -772,16 +904,16 @@ function OnCreateObj(object)
                     end
 
                     startPosition = Point2(object.x, object.z)
-                    if skillshot.cc == "true" or (nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
+                    if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
                         if skillshot.type == "line" then                            
                             skillshotToAdd = {object = object, startPosition = startPosition, endPosition = nil, directionVector = nil, 
                             startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, 
-                            skillshot = skillshot, evading = false}
+                            skillshot = skillshot, evading = false, drawit = false}
                         else
                             endPosition = Point2(object.x, object.z)
                             table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
                             directionVector = (endPosition - startPosition):normalized(), startTick = GetTickCount() + skillshot.spellDelay, 
-                            endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false})
+                            endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = false})
                         end
                     end
                     return
@@ -796,23 +928,23 @@ function OnAnimation(unit, animationName)
 end
 
 function OnProcessSpell(unit, spell)
-     if unit.isMe and myHero.charName == "MasterYi" and spell.name == GetSpellData(_W).name then
+     if unit.isMe and myHero.charName == "MasterYi" and spell.name == myHero:GetSpellData(_W).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "Nunu" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "Nunu" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "MissFortune" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "MissFortune" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "Malzahar" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "Malzahar" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "Katarina" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "Katarina" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "Janna" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "Janna" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "Galio" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "Galio" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "FiddleSticks" and spell.name == GetSpellData(_W).name then
+     elseif unit.isMe and myHero.charName == "FiddleSticks" and spell.name == myHero:GetSpellData(_W).name then
       CastingSpell = true
-     elseif unit.isMe and myHero.charName == "FiddleSticks" and spell.name == GetSpellData(_R).name then
+     elseif unit.isMe and myHero.charName == "FiddleSticks" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
      end
     if not myHero.dead and unit.team ~= myHero.team then
@@ -823,16 +955,16 @@ function OnProcessSpell(unit, spell)
                         startPosition = Point2(unit.x, unit.z)
                         endPosition = Point2(spell.endPos.x, spell.endPos.z)
                         directionVector = (endPosition - startPosition):normalized()
-                        if skillshot.cc == "true" or (nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
+                        if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
                             if skillshot.type == "line" then
 
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = startPosition + directionVector * skillshot.range,
                                 directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
-                                endTick = GetTickCount() + skillshot.spellDelay + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false})
+                                endTick = GetTickCount() + skillshot.spellDelay + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true})
                             else
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
                                 directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
-                                endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false})
+                                endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = true})
                             end
                         end
                         return
@@ -872,6 +1004,12 @@ function getPerpendicularFootpoint(linePoint1, linePoint2, point)
 end
 
 function OnTick()
+if haveflash then 
+	if myHero:CanUseSpell(flashSlot) == READY then 
+        flashready = true 
+	else flashready = false 
+	end
+end
 if GoodEvadeConfig.resetdodge then
     stopEvade()
     detectedSkillshots = {}
@@ -915,7 +1053,7 @@ if evading then
     nEnemies = CountEnemyHeroInRange(1500)
     table.sort(enemyes, function(x,y) return GetDistance(x) < GetDistance(y) end)
 
-    if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GetLatency() then
+    if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GetLatency()+20 then
         skillshotToAdd.directionVector = (Point2(skillshotToAdd.object.x, skillshotToAdd.object.z) - skillshotToAdd.startPosition):normalized()
         skillshotToAdd.endPosition = skillshotToAdd.startPosition + skillshotToAdd.directionVector * skillshotToAdd.skillshot.range
 
@@ -961,7 +1099,7 @@ if evading then
 
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if detectedSkillshot.skillshot.cc == "true" and (nSkillshots > 1) then DashTo(closestSafePoint.x, closestSafePoint.y) end
+                                if skillshot ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
                                 myHero:MoveTo(closestSafePoint.x, closestSafePoint.y)
                                 lastMovement.moveCommand = Point2(closestSafePoint.x, closestSafePoint.y)
                                 allowCustomMovement = false
@@ -1027,7 +1165,7 @@ if evading then
                             if closestPoint ~= nil then
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if detectedSkillshot.skillshot.cc == "true" and (nSkillshots > 1) then DashTo(closestPoint.x, closestPoint.y) end
+                                if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
                                 myHero:MoveTo(closestPoint.x, closestPoint.y)
                                 lastMovement.moveCommand = Point2(closestPoint.x, closestPoint.y)
                                 allowCustomMovement = false
@@ -1046,45 +1184,34 @@ end
 function DashTo(x, y)
     if isVayne and  myHero:CanUseSpell(_Q) == READY then
         CastSpell(_Q, x, y)
-    end
-    if isRiven and  myHero:CanUseSpell(_E) == READY then
+    elseif isRiven and  myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    end
-    if isGraves and myHero:CanUseSpell(_E) == READY then
+    elseif isGraves and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    end
-    if isEzreal and myHero:CanUseSpell(_E) == READY then
+    elseif isEzreal and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    end
-    if isKassadin and myHero:CanUseSpell(_R) == READY then
+    elseif isKassadin and myHero:CanUseSpell(_R) == READY then
         CastSpell(_R, x, y)
-    end
-    if isLeblanc and myHero:CanUseSpell(_W) == READY then
+    elseif isLeblanc and myHero:CanUseSpell(_W) == READY then
         CastSpell(_W, x, y)
-    end
-    if isFizz and myHero:CanUseSpell(_E) == READY then
+    elseif isFizz and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    end
-    if isShaco and myHero:CanUseSpell(_Q) == READY then
+    elseif isShaco and myHero:CanUseSpell(_Q) == READY then
         CastSpell(_Q, x, y)
-    end
-    if isTryndamere and myHero:CanUseSpell(_E) == READY then
+    elseif isTryndamere and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    end
-    if isCorki and myHero:CanUseSpell(_W) == READY then
+    elseif isCorki and myHero:CanUseSpell(_W) == READY then
         CastSpell(_W, x, y)
-    end
-    if isShen and myHero:CanUseSpell(_E) == READY then
+    elseif isShen and myHero:CanUseSpell(_E) == READY then
+        CastSpell(_E, x, y) 
+    elseif isRenekton and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    end 
-    if isRenekton and myHero:CanUseSpell(_E) == READY then
-        CastSpell(_E, x, y)
-    end 
-    if isTristana and myHero:CanUseSpell(_W) == READY then
+    elseif isTristana and myHero:CanUseSpell(_W) == READY then
         CastSpell(_W, x, y)
-    end
-    if isLucian and myHero:CanUseSpell(_E) == READY then
+    elseif isLucian and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
+    elseif haveflash and flashready then
+    	CastSpell(flashSlot, x, y)
     end                              
 end
 function NeedDash(skillshot, forceDash)
@@ -1092,57 +1219,45 @@ function NeedDash(skillshot, forceDash)
     if isVayne and myHero:CanUseSpell(_Q) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if nSkillshots > 1 or _isDangerSkillshot(skillshot) then return true end
-    end
-    if isRiven and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isRiven and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if nSkillshots > 1 or _isDangerSkillshot(skillshot) then return true end
-    end
-    if isGraves and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isGraves and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isTryndamere and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isTryndamere and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isShaco and myHero:CanUseSpell(_Q) == READY and skillshot.skillshot.cc == "true" then
+    elseif isShaco and myHero:CanUseSpell(_Q) == READY and skillshot.skillshot.cc == "true" then
         if skillshot or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isEzreal and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isEzreal and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isFizz and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isFizz and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if skillshot or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isShen and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isShen and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isKassadin and myHero:CanUseSpell(_R) == READY and skillshot.skillshot.cc == "true" then
+    elseif isKassadin and myHero:CanUseSpell(_R) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isLeblanc and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
+    elseif isLeblanc and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isRenekton and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isRenekton and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isTristana and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
+    elseif isTristana and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isCorki and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
+    elseif isCorki and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
         if _isDangerSkillshot(skillshot) then return true end
-    end
-    if isLucian and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+    elseif isLucian and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
         if forceDash or hp < 0.4 then return true end
         if _isDangerSkillshot(skillshot) then return true end
-    end                                     
+    elseif haveflash and flashready and isreallydangerous(skillshot)
+    then return true end                              
     return false
 end
 
@@ -1198,8 +1313,8 @@ function OnDraw()
     if GoodEvadeConfig.drawEnabled then
         for i, detectedSkillshot in pairs(detectedSkillshots) do
             skillshotPos = skillshotPosition(detectedSkillshot, GetTickCount())
-
-            if detectedSkillshot.skillshot.type == "line" then
+            if detectedSkillshot.drawit == true then
+            if detectedSkillshot.skillshot.type == "line" and detectedSkillshot.skillshot.name ~= "Enchanted Arrow" then
 drawLineshit(detectedSkillshot.startPosition, detectedSkillshot.endPosition, 0xFFFF0000, 3)
                 --DrawCircle(skillshotPos.x, myHero.y, skillshotPos.y, detectedSkillshot.skillshot.radius + 10, 0x00FF00)
                 DrawCircle(skillshotPos.x, myHero.y, skillshotPos.y, detectedSkillshot.skillshot.radius, 0xFFFFFF)
@@ -1211,6 +1326,7 @@ drawLineshit(detectedSkillshot.startPosition, detectedSkillshot.endPosition, 0xF
             end
         end
     end
+end
 end
 
 function _isValidTarget(target)
