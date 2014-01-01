@@ -78,6 +78,13 @@ champions2 = {
        ["Sona"] = {charName = "Sona", skillshots = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true"},        
     }},
+	["Gragas"] = {charName = "Gragas", skillshots = {
+        ["Barrel Roll"] = {name = "Barrel Roll", spellName = "GragasBarrelRoll", castDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "never"},
+        ["Barrel Roll Missile"] = {name = "Barrel Roll Missile", spellName = "GragasBarrelRollMissile", castDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "never"},
+    }},
+	    ["Syndra"] = {charName = "Syndra", skillshots = {
+        ["Q"] = {name = "Q", spellName = "SyndraQ", castDelay = 250, projectileName = "Syndra_Q_cas.troy", projectileSpeed = 500, range = 800, radius = 175, type = "circular", cc = "false"}
+    }},
         ["Malphite"] = {charName = "Malphite", skillshots = {
         ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 250, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 1900, range = 1000, radius = 300, type="circular", cc = "true"},    
     }},
