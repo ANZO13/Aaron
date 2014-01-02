@@ -3,10 +3,11 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "13"
+    local version = "14"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
+    local versionmessage = "Changelog: Fixed caitlyn E dash (stupid typo)"
 
     function Update()
         DownloadFile(URL, UPDATE_TMP_FILE, UpdateCallback)
@@ -438,6 +439,7 @@ end
     GoodEvadeConfig.dodgeEnabled = true
 
     PrintChat(" >> Freaking Good Evade v"..version.." loaded")
+    PrintChat(versionmessage)
         if AutoUpdate then
         DelayAction(Update, 10)
     end
@@ -1219,7 +1221,7 @@ function DashTo(x, y)
     elseif isCaitlyn and myHero:CanUseSpell(_E) == READY then
         myPos = Point2(myHero.x, myHero.z)
         castpos = myPos + (myPos - (Point2(x, y)))
-        CastSpell(_E, castpos.x, castpox.y)
+        CastSpell(_E, castpos.x, castpos.y)
     elseif haveflash and flashready and useflash then
         CastSpell(flashSlot, x, y)
         useflash = false
