@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "7"
+    local version = "8"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -64,7 +64,7 @@ champions2 = {
         ["Thundering Shuriken"] = {name = "Thundering Shuriken", spellName = "KennenShurikenHurlMissile1", spellDelay = 180, projectileName = "kennen_ts_mis.troy", projectileSpeed = 1700, range = 1050, radius = 50, type = "line", cc = "false"}--could be 4 if you have 2 marks
     }},
     ["Amumu"] = {charName = "Amumu", skillshots = {
-        ["Bandage Toss"] = {name = "Bandage Toss", spellName = "BandageToss", spellDelay = 250, projectileName = "Bandage_beam.troy", projectileSpeed = 2000, range = 1100, radius = 80, type = "line", evasiondanger = true, cc = "true"}
+        ["Bandage Toss"] = {name = "Bandage Toss", spellName = "BandageToss", spellDelay = 250, projectileName = "Bandage_beam.troy", projectileSpeed = 2000, range = 1100, radius = 80, type = "line", cc = "true"}
     }},
     ["Lee Sin"] = {charName = "LeeSin", skillshots = {
         ["Sonic Wave"] = {name = "Sonic Wave", spellName = "BlindMonkQOne", spellDelay = 250, projectileName = "blindMonk_Q_mis_01.troy", projectileSpeed = 1800, range = 1100, radius = 70, type = "line", cc = "true"} --if he hit this he will slow you
@@ -79,14 +79,14 @@ champions2 = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true"},        
     }},
 	["Gragas"] = {charName = "Gragas", skillshots = {
-        ["Barrel Roll"] = {name = "Barrel Roll", spellName = "GragasBarrelRoll", castDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "never"},
-        ["Barrel Roll Missile"] = {name = "Barrel Roll Missile", spellName = "GragasBarrelRollMissile", castDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "never"},
+        ["Barrel Roll"] = {name = "Barrel Roll", spellName = "GragasBarrelRoll", spellDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
+        ["Barrel Roll Missile"] = {name = "Barrel Roll Missile", spellName = "GragasBarrelRollMissile", spellDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
     }},
 	    ["Syndra"] = {charName = "Syndra", skillshots = {
-        ["Q"] = {name = "Q", spellName = "SyndraQ", castDelay = 250, projectileName = "Syndra_Q_cas.troy", projectileSpeed = 500, range = 800, radius = 175, type = "circular", cc = "false"}
+        ["Q"] = {name = "Q", spellName = "SyndraQ", spellDelay = 250, projectileName = "Syndra_Q_cas.troy", projectileSpeed = 500, range = 800, radius = 175, type = "circular", cc = "false"}
     }},
         ["Malphite"] = {charName = "Malphite", skillshots = {
-        ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 250, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 1900, range = 1000, radius = 300, type="circular", cc = "true"},    
+        ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 0, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 150, range = 1000, radius = 300, type="circular", cc = "true"},    
     }},
     ["Ezreal"] = {charName = "Ezreal", skillshots = {
         ["Mystic Shot"]             = {name = "Mystic Shot",      spellName = "EzrealMysticShot",      spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
@@ -203,7 +203,6 @@ champions2 = {
     }},
     ["Varus"] = {charName = "Varus", skillshots = {
         ["Varus Q Missile"] = {name = "Varus Q Missile", spellName = "somerandomspellnamethatwillnevergetcalled", spellDelay = 0, projectileName = "VarusQ_mis.troy", projectileSpeed = 1900, range = 1600, radius = 70, type = "line", cc = "false"},
-        ["Varus E"] = {name = "Varus E", spellName = "VarusE", spellDelay = 250, projectileName = "VarusEMissileLong.troy", projectileSpeed = 1500, range = 925, radius = 275, type = "circular", cc = "true"},
         ["VarusR"] = {name = "VarusR", spellName = "VarusR", spellDelay = 250, projectileName = "VarusRMissile.troy", projectileSpeed = 1950, range = 1250, radius = 100, type = "line", cc = "true"},
     }},
     ["Karma"] = {charName = "Karma", skillshots = {
@@ -215,7 +214,7 @@ champions2 = {
    }},
     ["Xerath"] = {charName = "Xerath", skillshots = {
         ["Xerath Arcanopulse"] =  {name = "Xerath Arcanopulse", spellName = "XerathArcanopulse", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 25000, range = 1025, radius = 100, type = "line", cc = "false"},
-        ["Xerath Arcanopulse Extended"] =  {name = "Xerath Arcanopulse Extended", spellName = "xeratharcanopulseextended", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 2500, range = 1625, radius = 100, type = "line", cc = "false"},
+        ["Xerath Arcanopulse Extended"] =  {name = "Xerath Arcanopulse Extended", spellName = "xeratharcanopulseextended", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 25000, range = 1625, radius = 100, type = "line", cc = "false"},
         ["xeratharcanebarragewrapper"] = {name = "xeratharcanebarragewrapper", spellName = "xeratharcanebarragewrapper", spellDelay = 250, projectileName = "Xerath_E_cas.troy", projectileSpeed = 300, range = 1100, radius = 265, type = "circular", cc = "false"},
         ["xeratharcanebarragewrapperext"] = {name = "xeratharcanebarragewrapperext", spellName = "xeratharcanebarragewrapperext", spellDelay = 250, projectileName = "Xerath_E_cas.troy", projectileSpeed = 300, range = 1700, radius = 265, type = "circular", cc = "false"},
     }},
@@ -243,8 +242,6 @@ champions2 = {
    -- }},
     ["Ziggs"] = {charName = "Ziggs", skillshots = {
         ["ZiggsQ"] =  {name = "ZiggsQ", spellName = "ZiggsQ", spellDelay = 250, projectileName = "ZiggsQ.troy", projectileSpeed = 3000, range = 2000, radius = 155, type = "circular", cc = "false"},
-        ["ZiggsW"] =  {name = "ZiggsW", spellName = "ZiggsW", spellDelay = 250, projectileName = "ZiggsW_mis.troy", projectileSpeed = 3000, range = 2000, radius = 210, type = "circular", cc = "true"},
-        ["ZiggsE"] =  {name = "ZiggsE", spellName = "ZiggsE", spellDelay = 250, projectileName = "ZiggsE_Mis_Large.troy", projectileSpeed = 3000, range = 2000, radius = 235, type = "circular", cc = "true"},
     }},
     ["Galio"] = {charName = "Galio", skillshots = {
         ["GalioResoluteSmite"] =  {name = "GalioResoluteSmite", spellName = "GalioResoluteSmite", spellDelay = 250, projectileName = "galio_concussiveBlast_mis.troy", projectileSpeed = 850, range = 2000, radius = 200, type = "circular", cc = "true"},
@@ -274,7 +271,8 @@ trueDelay = {}
 haveflash = false
 flashSlot = nil
 flashready = false
-
+lastspell = "Q"
+useflash = false
 -- Code ------------------------------------------------------------------------
 function getTarget(targetId)
     if targetId ~= 0 and targetId ~= nil then
@@ -321,6 +319,10 @@ end
     if myHero.charName == "Kassadin" then 
         isKassadin = true
         dashrange = 700
+    end
+    if myHero.charName == "Caitlyn"
+        then isCaitlyn  = true
+        dashrange = 400
     end
     isLeblanc = false
     if myHero.charName == "Leblanc" then 
@@ -473,6 +475,10 @@ function dodgeCircularShot(skillshot)
     evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
 
     safeTarget = skillshot.endPosition + (heroPosition - skillshot.endPosition):normalized() * evadeRadius
+    if skillshot.skillshot.name == "UFSlash" and NeedDash(skillshot, true) then
+        evadeTo(safeTarget.x, safeTarget.y, true)
+    end
+
 
     if getLastMovementDestination():distance(skillshot.endPosition) <= evadeRadius then
         closestTarget = skillshot.endPosition + (getLastMovementDestination() - skillshot.endPosition):normalized() * evadeRadius
@@ -523,7 +529,16 @@ function dodgeCircularShot(skillshot)
     if closestPoint ~= nil then
         closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
         evadeTo(closestPoint.x, closestPoint.y)
-    elseif NeedDash(skillshot, true) and dashrange ~= 0 then
+    
+		
+		elseif NeedDash(skillshot, true) then
+    dodgeCircularShotdash(skillshot)
+    end
+end
+
+function dodgeCircularShotdash(skillshot)
+smoothing = 0
+skillshot.evading = true
 
     heroPosition = Point2(myHero.x, myHero.z)
 
@@ -583,7 +598,6 @@ function dodgeCircularShot(skillshot)
         evadeTo(closestPoint.x, closestPoint.y, true)
     end
 end
-    end
 
 function dodgeLineShot(skillshot)
     heroPosition = Point2(myHero.x, myHero.z)
@@ -954,6 +968,12 @@ function OnProcessSpell(unit, spell)
      elseif unit.isMe and myHero.charName == "FiddleSticks" and spell.name == myHero:GetSpellData(_R).name then
       CastingSpell = true
      end
+     if unit.isMe and isLeblanc then
+        if spell.name == myHero:GetSpellData(_Q).name then lastspell = "Q"
+        elseif spell.name == myHero:GetSpellData(_W).name then lastspell = "W"
+        elseif spell.name == myHero:GetSpellData(_E).name then lastspell = "E"
+        end
+     end
     if not myHero.dead and unit.team ~= myHero.team then
         for i, skillShotChampion in pairs(champions) do
             if skillShotChampion.charName == unit.charName then
@@ -964,11 +984,10 @@ function OnProcessSpell(unit, spell)
                         directionVector = (endPosition - startPosition):normalized()
                         if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
                             if skillshot.type == "line" then
-
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = startPosition + directionVector * skillshot.range,
                                 directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
                                 endTick = GetTickCount() + skillshot.spellDelay + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true})
-                            else
+                            elseif skillshot.type == "circular" then
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
                                 directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
                                 endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = true})
@@ -1172,12 +1191,13 @@ if evading then
                             if closestPoint ~= nil then
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
+                                if skillshot ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
                                 myHero:MoveTo(closestPoint.x, closestPoint.y)
                                 lastMovement.moveCommand = Point2(closestPoint.x, closestPoint.y)
                                 allowCustomMovement = false
                                 captureMovements = true
                             end
+                        end
                         end
                     end
                 end
@@ -1201,6 +1221,8 @@ function DashTo(x, y)
         CastSpell(_R, x, y)
     elseif isLeblanc and myHero:CanUseSpell(_W) == READY then
         CastSpell(_W, x, y)
+    elseif isLeblanc and myHero:CanUseSpell(_R) == READY and lastspell == "W" then
+        CastSpell(_R, x, y)
     elseif isFizz and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
     elseif isShaco and myHero:CanUseSpell(_Q) == READY then
@@ -1217,54 +1239,126 @@ function DashTo(x, y)
         CastSpell(_W, x, y)
     elseif isLucian and myHero:CanUseSpell(_E) == READY then
         CastSpell(_E, x, y)
-    elseif haveflash and flashready then
+    elseif isCaitlyn and myHero:CanUseSpell(_E) == READY then
+        myPos = Point2(myHero.x, myHero.z)
+        castpos = myPos + (myPos - (Point2(x, y)))
+        CastSpell(_E, castpos.x, castpox.y)
+    elseif haveflash and flashready and useflash then
     	CastSpell(flashSlot, x, y)
+        useflash = false
     end                              
 end
 function NeedDash(skillshot, forceDash)
+    useflash = false
     local hp = myHero.health / myHero.maxHealth
     if isVayne and myHero:CanUseSpell(_Q) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if nSkillshots > 1 or _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then 
+dashrange = 300
+return true end
+        if nSkillshots > 1 or _isDangerSkillshot(skillshot) then 
+dashrange = 300
+return true end
     elseif isRiven and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if nSkillshots > 1 or _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then 
+dashrange = 325 
+return true end
+        if nSkillshots > 1 or _isDangerSkillshot(skillshot) then 
+dashrange = 325
+return true end
     elseif isGraves and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 425
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 425
+return true end
     elseif isTryndamere and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 660
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 660
+return true end
     elseif isShaco and myHero:CanUseSpell(_Q) == READY and skillshot.skillshot.cc == "true" then
-        if skillshot or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if skillshot or hp < 0.4 then
+dashrange = 400
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 400
+return true end
     elseif isEzreal and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 450
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 450
+return true end
     elseif isFizz and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if skillshot or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if skillshot or hp < 0.4 then
+dashrange = 400
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 400
+return true end
     elseif isShen and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 600
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 600
+return true end
     elseif isKassadin and myHero:CanUseSpell(_R) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 700
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 700
+return true end
     elseif isLeblanc and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 600
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 600
+return true end
+    elseif isLeblanc and myHero:CanUseSpell(_R) == READY and skillshot.skillshot.cc == "true" and lastspell == "W" then
+        if forceDash or hp < 0.4 then
+dashrange = 600
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 600
+return true end
     elseif isRenekton and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
+        if forceDash or hp < 0.4 then
+dashrange = 450
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 450
+return true end
     elseif isTristana and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
-        if _isDangerSkillshot(skillshot) then return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 900
+return true end
     elseif isCorki and myHero:CanUseSpell(_W) == READY and skillshot.skillshot.cc == "true" then
-        if _isDangerSkillshot(skillshot) then return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 800
+return true end
     elseif isLucian and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
-        if forceDash or hp < 0.4 then return true end
-        if _isDangerSkillshot(skillshot) then return true end
-    elseif haveflash and flashready and isreallydangerous(skillshot)
-    then return true end                              
+        if forceDash or hp < 0.4 then
+dashrange = 425
+return true end
+        if _isDangerSkillshot(skillshot) then
+dashrange = 425
+return true end
+    elseif isCaitlyn and myHero:CanUseSpell(_E) == READY and skillshot.skillshot.cc == "true" then
+        if forceDash or hp < 0.4 then
+            dashrange = 400
+        return true end
+    elseif haveflash and flashready and isreallydangerous(skillshot) then
+dashrange = 400
+useflash = true
+return true 
+end                              
     return false
 end
 
