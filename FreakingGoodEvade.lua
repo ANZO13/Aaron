@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "10"
+    local version = "11"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -78,11 +78,11 @@ champions2 = {
        ["Sona"] = {charName = "Sona", skillshots = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true"},        
     }},
-	["Gragas"] = {charName = "Gragas", skillshots = {
+    ["Gragas"] = {charName = "Gragas", skillshots = {
         ["Barrel Roll"] = {name = "Barrel Roll", spellName = "GragasBarrelRoll", spellDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
         ["Barrel Roll Missile"] = {name = "Barrel Roll Missile", spellName = "GragasBarrelRollMissile", spellDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
     }},
-	    ["Syndra"] = {charName = "Syndra", skillshots = {
+        ["Syndra"] = {charName = "Syndra", skillshots = {
         ["Q"] = {name = "Q", spellName = "SyndraQ", spellDelay = 250, projectileName = "Syndra_Q_cas.troy", projectileSpeed = 500, range = 800, radius = 175, type = "circular", cc = "false"}
     }},
         ["Malphite"] = {charName = "Malphite", skillshots = {
@@ -400,12 +400,12 @@ end
         spellId = nil,
         approachedPoint = nil
     }
-	
+    
 GoodEvadeSkillshotConfig = scriptConfig("Good Evade skillshots", "goodEvade skillshot config")
 for i, skillShotChampion in pairs(champions) do
 for i, skillshot in pairs(skillShotChampion.skillshots) do
                     name = tostring(skillshot.spellName)
-					name2 = tostring(skillshot.name)
+                    name2 = tostring(skillshot.name)
                     if skillshot.cc == "true" then
 GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 2, 0, 2, 0)
 elseif skillshot.cc == "false" then GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 1, 0, 2, 0)
@@ -526,23 +526,23 @@ function dodgeCircularShot(skillshot)
     if closestPoint ~= nil then
         closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
         evadeTo(closestPoint.x, closestPoint.y)
-		elseif NeedDash(skillshot, true) then
+        elseif NeedDash(skillshot, true) then
             if getLastMovementDestination() ~= heroPosition and not isreallydangerous(skillshot) then
     dashpos = heroPosition - (heroPosition - getLastMovementDestination()):normalized() * dashrange
     evadeTo(dashpos.x, dashpos.y, true)
             elseif NeedDash(skillshot, true) and not isreallydangerous(skillshot) then EvadeTo(safeTarget.x, safeTarget.y, true)
             elseif NeedDash(skillshot, true) and not (dashrange < 400 and flashready) then evadeTo(safeTarget.x, safeTarget.y, true)
             elseif HaveShield() then 
-			  	for i, detectedSkillshot in ipairs(detectedSkillshots) do
-			  		if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
-			  			table.remove(detectedSkillshots, i)
-			  			i = i-1
-			  			    if detectedSkillshot.evading then
-			                continueMovement(detectedSkillshot)
-			                end
-			  		end
-			  	end
-          		CastSpell(shieldslot)
+                for i, detectedSkillshot in ipairs(detectedSkillshots) do
+                    if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
+                        table.remove(detectedSkillshots, i)
+                        i = i-1
+                            if detectedSkillshot.evading then
+                            continueMovement(detectedSkillshot)
+                            end
+                    end
+                end
+                CastSpell(shieldslot)
             elseif haveflash and flashready then FlashTo(safeTarget.x, safeTarget.y)
     end
     end
@@ -550,11 +550,11 @@ end
 
 function HaveShield()
 if myHero.charName == "Sivir" and myHero:GetSpellData(_W) == READY then
-	shieldslot = _W
-	return true
+    shieldslot = _W
+    return true
 elseif myHero.charName == "Nocturne" and myHero:GetSpellData(_W) == READY then
-	shieldslot = _W
-	return true
+    shieldslot = _W
+    return true
 end
 return false
 end
@@ -654,23 +654,23 @@ function dodgeLineShot(skillshot)
         table.insert(possibleMovementTargets, closestPoint2)
     end
 
-	    if evadeToTarget1 ~= nil then
-	        table.insert(possibleMovementTargets, evadeToTarget1)
-	    end
+        if evadeToTarget1 ~= nil then
+            table.insert(possibleMovementTargets, evadeToTarget1)
+        end
 
-	    if evadeToTarget2 ~= nil then
-	        table.insert(possibleMovementTargets, evadeToTarget2)
-	    end
+        if evadeToTarget2 ~= nil then
+            table.insert(possibleMovementTargets, evadeToTarget2)
+        end
 
-	    if evadeToTarget3 ~= nil then
-	        table.insert(possibleMovementTargets, evadeToTarget3)
-	    end
+        if evadeToTarget3 ~= nil then
+            table.insert(possibleMovementTargets, evadeToTarget3)
+        end
 
-	    if evadeToTarget4 ~= nil then
-	        table.insert(possibleMovementTargets, evadeToTarget4)
-	    end
+        if evadeToTarget4 ~= nil then
+            table.insert(possibleMovementTargets, evadeToTarget4)
+        end
 
-	    evadeTarget = findBestDirection(skillshot,getLastMovementDestination(), possibleMovementTargets)
+        evadeTarget = findBestDirection(skillshot,getLastMovementDestination(), possibleMovementTargets)
     end
 
     if evadeTarget then
@@ -693,18 +693,18 @@ function dodgeLineShot(skillshot)
   elseif InsideTheWall(evadeTo1) then
     safeTarget = evadeTo2
   end
-  	evadeTo(safeTarget.x, safeTarget.y, true)
+    evadeTo(safeTarget.x, safeTarget.y, true)
   elseif HaveShield() then 
-  	for i, detectedSkillshot in ipairs(detectedSkillshots) do
-  		if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
-  			table.remove(detectedSkillshots, i)
-  			i = i-1
-  			    if detectedSkillshot.evading then
+    for i, detectedSkillshot in ipairs(detectedSkillshots) do
+        if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
+            table.remove(detectedSkillshots, i)
+            i = i-1
+                if detectedSkillshot.evading then
                 continueMovement(detectedSkillshot)
                 end
-  		end
-  	end
-  	CastSpell(shieldslot)
+        end
+    end
+    CastSpell(shieldslot)
 end
 end---------------------------
 
@@ -766,18 +766,18 @@ end
 
 function findBestDirection(skillshot, referencePoint, possiblePoints)
 if not skillshot then return closestPoint end
-	referencePoint = Point2(mousePos.x , mousePos.z)
+    referencePoint = Point2(mousePos.x , mousePos.z)
     closestPoint = nil
     closestDistance = nil
-	side1 = getSideOfLine(skillshot.startPosition, skillshot.endPosition, Point2(myHero.x, myHero.z)) 
+    side1 = getSideOfLine(skillshot.startPosition, skillshot.endPosition, Point2(myHero.x, myHero.z)) 
     for i, point in pairs(possiblePoints) do
         if point ~= nil and skillshot ~= nil then
-        	side2 = getSideOfLine(skillshot.startPosition, skillshot.endPosition, point)
-        	distToSkillshot = Line2(skillshot.startPosition, skillshot.endPosition):distance(point)
-        	mindistSkillshot = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer
+            side2 = getSideOfLine(skillshot.startPosition, skillshot.endPosition, point)
+            distToSkillshot = Line2(skillshot.startPosition, skillshot.endPosition):distance(point)
+            mindistSkillshot = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer
             distance = point:distance(referencePoint)
             if (closestDistance == nil or distance <= closestDistance) and not InsideTheWall(point) 
-            	and distToSkillshot > mindistSkillshot and (side1 == side2 or side1 == 0) then
+                and distToSkillshot > mindistSkillshot and (side1 == side2 or side1 == 0) then
                 closestDistance = distance
                 closestPoint = point
             end
@@ -869,7 +869,7 @@ end
 function OnDeleteObj(object)
     if object ~= nil and object.type == "obj_GeneralParticleEmmiter" then
         for i, detectedSkillshot in ipairs(detectedSkillshots) do
-				if detectedSkillshot.skillshot.type == "line" then
+                if detectedSkillshot.skillshot.type == "line" then
             if detectedSkillshot.skillshot.projectileName == object.name then
             table.remove(detectedSkillshots, i)
             i = i-1
@@ -1006,10 +1006,10 @@ end
 
 function OnTick()
 if haveflash then 
-	if myHero:CanUseSpell(flashSlot) == READY then 
+    if myHero:CanUseSpell(flashSlot) == READY then 
         flashready = true 
-	else flashready = false 
-	end
+    else flashready = false 
+    end
 end
 if GoodEvadeConfig.resetdodge then
     stopEvade()
@@ -1027,7 +1027,7 @@ if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainM
 elseif AutoCarry.Keys ~= nil then
 if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
         if lastset < GetTickCount() then 
-		lastMovement.destination = Point2(mousePos.x, mousePos.z)
+        lastMovement.destination = Point2(mousePos.x, mousePos.z)
         lastset = GetTickCount() + 100
         end
 end
@@ -1221,7 +1221,7 @@ function DashTo(x, y)
         castpos = myPos + (myPos - (Point2(x, y)))
         CastSpell(_E, castpos.x, castpox.y)
     elseif haveflash and flashready and useflash then
-    	CastSpell(flashSlot, x, y)
+        CastSpell(flashSlot, x, y)
         useflash = false
     end                              
 end
