@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "8"
+    local version = "9"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -286,6 +286,14 @@ function getLastMovementDestination()
 end
 
 function OnLoad()
+    GoodEvadeConfig = scriptConfig("Good Evade", "goodEvade")
+    GoodEvadeConfig:addParam("dodgeEnabled", "Dodge Skillshots", SCRIPT_PARAM_ONOFF, true)
+    GoodEvadeConfig:addParam("drawEnabled", "Draw Skillshots", SCRIPT_PARAM_ONOFF, true)
+    GoodEvadeConfig:addParam("dodgeCConly", "Dodge CC only spells", SCRIPT_PARAM_ONKEYDOWN, false, 32)
+    GoodEvadeConfig:addParam("dodgeCConly2", "Dodge CC only spells toggle", SCRIPT_PARAM_ONKEYTOGGLE, false, 77)
+    GoodEvadeConfig:addParam("resetdodge", "Reset Dodge", SCRIPT_PARAM_ONKEYDOWN, false, 17)
+    GoodEvadeConfig:permaShow("dodgeEnabled")
+
         for i = 1, heroManager.iCount do
         local hero = heroManager:GetHero(i)
         if hero.team ~= myHero.team then
@@ -391,14 +399,6 @@ end
         spellId = nil,
         approachedPoint = nil
     }
-
-    GoodEvadeConfig = scriptConfig("Good Evade", "goodEvade")
-    GoodEvadeConfig:addParam("dodgeEnabled", "Dodge Skillshots", SCRIPT_PARAM_ONOFF, true)
-    GoodEvadeConfig:addParam("drawEnabled", "Draw Skillshots", SCRIPT_PARAM_ONOFF, true)
-    GoodEvadeConfig:addParam("dodgeCConly", "Dodge CC only spells", SCRIPT_PARAM_ONKEYDOWN, false, 32)
-    GoodEvadeConfig:addParam("dodgeCConly2", "Dodge CC only spells toggle", SCRIPT_PARAM_ONKEYTOGGLE, false, 77)
-    GoodEvadeConfig:addParam("resetdodge", "Reset Dodge", SCRIPT_PARAM_ONKEYDOWN, false, 17)
-    GoodEvadeConfig:permaShow("dodgeEnabled")
 	
 GoodEvadeSkillshotConfig = scriptConfig("Good Evade skillshots", "goodEvade skillshot config")
 for i, skillShotChampion in pairs(champions) do
@@ -1125,7 +1125,7 @@ if evading then
 
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if skillshot ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
+                                if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
                                 myHero:MoveTo(closestSafePoint.x, closestSafePoint.y)
                                 lastMovement.moveCommand = Point2(closestSafePoint.x, closestSafePoint.y)
                                 allowCustomMovement = false
@@ -1191,7 +1191,7 @@ if evading then
                             if closestPoint ~= nil then
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if skillshot ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
+                                if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
                                 myHero:MoveTo(closestPoint.x, closestPoint.y)
                                 lastMovement.moveCommand = Point2(closestPoint.x, closestPoint.y)
                                 allowCustomMovement = false
