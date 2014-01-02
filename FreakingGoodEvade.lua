@@ -273,6 +273,7 @@ flashSlot = nil
 flashready = false
 lastspell = "Q"
 useflash = false
+shieldslot = nil
 -- Code ------------------------------------------------------------------------
 function getTarget(targetId)
     if targetId ~= 0 and targetId ~= nil then
@@ -468,52 +469,48 @@ end
 
 function dodgeCircularShot(skillshot)
     skillshot.evading = true
-
+ 
     heroPosition = Point2(myHero.x, myHero.z)
-
+ 
     moveableDistance = myHero.ms * math.max(skillshot.endTick - GetTickCount() - GetLatency(), 0) / 1000
     evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
-
+ 
     safeTarget = skillshot.endPosition + (heroPosition - skillshot.endPosition):normalized() * evadeRadius
-    if skillshot.skillshot.name == "UFSlash" and NeedDash(skillshot, true) then
-        evadeTo(safeTarget.x, safeTarget.y, true)
-    end
-
-
+ 
     if getLastMovementDestination():distance(skillshot.endPosition) <= evadeRadius then
         closestTarget = skillshot.endPosition + (getLastMovementDestination() - skillshot.endPosition):normalized() * evadeRadius
     else
         closestTarget = nil
     end
-        
+       
     lineDistance = Line2(heroPosition, getLastMovementDestination()):distance(skillshot.endPosition)
     directionTarget = heroPosition + (getLastMovementDestination() - heroPosition):normalized() * (math.sqrt(heroPosition:distance(skillshot.endPosition)^2 - lineDistance^2) + math.sqrt(evadeRadius^2 - lineDistance^2))
     if directionTarget:distance(skillshot.endPosition) >= evadeRadius + 1 then
         directionTarget = heroPosition + (getLastMovementDestination() - heroPosition):normalized() * (math.sqrt(evadeRadius^2 - lineDistance^2) - math.sqrt(heroPosition:distance(skillshot.endPosition)^2 - lineDistance^2))
     end
-
+ 
     possibleMovementTargets = {}
     intersectionPoints = Circle2(skillshot.endPosition, evadeRadius):intersectionPoints(Circle2(heroPosition, moveableDistance))
     if #intersectionPoints == 2 then
         leftTarget = intersectionPoints[1]
         rightTarget = intersectionPoints[2]
-
+ 
         local theta = ((-skillshot.endPosition + leftTarget):polar() - (-skillshot.endPosition + rightTarget):polar()) % 360
-        if ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) 
-            and getSideOfLine(skillshot.endPosition, rightTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)) 
-        or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) 
-            or getSideOfLine(skillshot.endPosition, rightTarget, directionTarget) 
+        if ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, directionTarget)
+            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition)
+            and getSideOfLine(skillshot.endPosition, rightTarget, directionTarget)
+            == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition))
+        or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, directionTarget)
+            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition)
+            or getSideOfLine(skillshot.endPosition, rightTarget, directionTarget)
             == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)))) then
             table.insert(possibleMovementTargets, directionTarget)
         end
-
+ 
         --[[if closestTarget and ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, closestTarget) == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) and getSideOfLine(skillshot.endPosition, rightTarget, closestTarget) == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)) or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, closestTarget) == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) or getSideOfLine(skillshot.endPosition, rightTarget, closestTarget) == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)))) then
             table.insert(possibleMovementTargets, closestTarget)
         end]]
-
+ 
         table.insert(possibleMovementTargets, safeTarget)
         table.insert(possibleMovementTargets, leftTarget)
         table.insert(possibleMovementTargets, rightTarget)
@@ -524,79 +521,46 @@ function dodgeCircularShot(skillshot)
             table.insert(possibleMovementTargets, safeTarget)
         end
     end
-
+ 
     closestPoint = findBestDirection(skillshot, getLastMovementDestination(), possibleMovementTargets)
     if closestPoint ~= nil then
         closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
         evadeTo(closestPoint.x, closestPoint.y)
-    
-		
 		elseif NeedDash(skillshot, true) then
-    dodgeCircularShotdash(skillshot)
+            if getLastMovementDestination() ~= heroPosition and not isreallydangerous(skillshot) then
+    dashpos = heroPosition - (heroPosition - getLastMovementDestination()):normalized() * dashrange
+    evadeTo(dashpos.x, dashpos.y, true)
+            elseif NeedDash(skillshot, true) and not isreallydangerous(skillshot) then EvadeTo(safeTarget.x, safeTarget.y, true)
+            elseif NeedDash(skillshot, true) and not (dashrange < 400 and flashready) then evadeTo(safeTarget.x, safeTarget.y, true)
+            elseif HaveShield() then 
+			  	for i, detectedSkillshot in ipairs(detectedSkillshots) do
+			  		if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
+			  			table.remove(detectedSkillshots, i)
+			  			i = i-1
+			  			    if detectedSkillshot.evading then
+			                continueMovement(detectedSkillshot)
+			                end
+			  		end
+			  	end
+          		CastSpell(shieldslot)
+            elseif haveflash and flashready then FlashTo(safeTarget.x, safeTarget.y)
+    end
     end
 end
 
-function dodgeCircularShotdash(skillshot)
-smoothing = 0
-skillshot.evading = true
+function HaveShield()
+if myHero.charName == "Sivir" and myHero:GetSpellData(_W) == READY then
+	shieldslot = _W
+	return true
+elseif myHero.charName == "Nocturne" and myHero:GetSpellData(_W) == READY then
+	shieldslot = _W
+	return true
+end
+return false
+end
 
-    heroPosition = Point2(myHero.x, myHero.z)
-
-    moveableDistance = (myHero.ms * math.max(skillshot.endTick - GetTickCount() - GetLatency(), 0) / 1000) + dashrange
-    evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
-
-    safeTarget = skillshot.endPosition + (heroPosition - skillshot.endPosition):normalized() * evadeRadius
-
-    if getLastMovementDestination():distance(skillshot.endPosition) <= evadeRadius then
-        closestTarget = skillshot.endPosition + (getLastMovementDestination() - skillshot.endPosition):normalized() * evadeRadius
-    else
-        closestTarget = nil
-    end
-        
-    lineDistance = Line2(heroPosition, getLastMovementDestination()):distance(skillshot.endPosition)
-    directionTarget = heroPosition + (getLastMovementDestination() - heroPosition):normalized() * (math.sqrt(heroPosition:distance(skillshot.endPosition)^2 - lineDistance^2) + math.sqrt(evadeRadius^2 - lineDistance^2))
-    if directionTarget:distance(skillshot.endPosition) >= evadeRadius + 1 then
-        directionTarget = heroPosition + (getLastMovementDestination() - heroPosition):normalized() * (math.sqrt(evadeRadius^2 - lineDistance^2) - math.sqrt(heroPosition:distance(skillshot.endPosition)^2 - lineDistance^2))
-    end
-
-    possibleMovementTargets = {}
-    intersectionPoints = Circle2(skillshot.endPosition, evadeRadius):intersectionPoints(Circle2(heroPosition, moveableDistance))
-    if #intersectionPoints == 2 then
-        leftTarget = intersectionPoints[1]
-        rightTarget = intersectionPoints[2]
-
-        local theta = ((-skillshot.endPosition + leftTarget):polar() - (-skillshot.endPosition + rightTarget):polar()) % 360
-        if ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) 
-            and getSideOfLine(skillshot.endPosition, rightTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)) 
-        or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) 
-            or getSideOfLine(skillshot.endPosition, rightTarget, directionTarget) 
-            == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)))) then
-            table.insert(possibleMovementTargets, directionTarget)
-        end
-
-        --[[if closestTarget and ((theta >= 180 and getSideOfLine(skillshot.endPosition, leftTarget, closestTarget) == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) and getSideOfLine(skillshot.endPosition, rightTarget, closestTarget) == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)) or (theta <= 180 and (getSideOfLine(skillshot.endPosition, leftTarget, closestTarget) == getSideOfLine(skillshot.endPosition, leftTarget, heroPosition) or getSideOfLine(skillshot.endPosition, rightTarget, closestTarget) == getSideOfLine(skillshot.endPosition, rightTarget, heroPosition)))) then
-            table.insert(possibleMovementTargets, closestTarget)
-        end]]
-
-        table.insert(possibleMovementTargets, safeTarget)
-        table.insert(possibleMovementTargets, leftTarget)
-        table.insert(possibleMovementTargets, rightTarget)
-    else
-        if skillshot.skillshot.radius <= moveableDistance then
-            table.insert(possibleMovementTargets, closestTarget)
-            table.insert(possibleMovementTargets, directionTarget)
-            table.insert(possibleMovementTargets, safeTarget)
-        end
-    end
-
-    closestPoint = findBestDirection(skillshot, getLastMovementDestination(), possibleMovementTargets)
-    if closestPoint ~= nil then
-        closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
-        evadeTo(closestPoint.x, closestPoint.y, true)
-    end
+function FlashTo(x, y)
+CastSpell(flashslot, x, y)
 end
 
 function dodgeLineShot(skillshot)
@@ -730,6 +694,17 @@ function dodgeLineShot(skillshot)
     safeTarget = evadeTo2
   end
   	evadeTo(safeTarget.x, safeTarget.y, true)
+  elseif HaveShield() then 
+  	for i, detectedSkillshot in ipairs(detectedSkillshots) do
+  		if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
+  			table.remove(detectedSkillshots, i)
+  			i = i-1
+  			    if detectedSkillshot.evading then
+                continueMovement(detectedSkillshot)
+                end
+  		end
+  	end
+  	CastSpell(shieldslot)
 end
 end---------------------------
 
@@ -1041,7 +1016,7 @@ if GoodEvadeConfig.resetdodge then
     detectedSkillshots = {}
 end
 if AutoCarry ~= nil then 
-if AutoCarry.MainMenu.AutoCarry ~= nil then 
+if AutoCarry.MainMenu ~= nil then 
 if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
         then
         if lastset < GetTickCount()
@@ -1049,7 +1024,7 @@ if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainM
         lastset = GetTickCount() + 100
         end
     end
-elseif AutoCarry.Keys.AutoCarry ~= nil then
+elseif AutoCarry.Keys ~= nil then
 if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
         if lastset < GetTickCount() then 
 		lastMovement.destination = Point2(mousePos.x, mousePos.z)
