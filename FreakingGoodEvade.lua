@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "9"
+    local version = "10"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -1125,7 +1125,7 @@ if evading then
 
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
+                                if skillshot ~= nil then if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
                                 myHero:MoveTo(closestSafePoint.x, closestSafePoint.y)
                                 lastMovement.moveCommand = Point2(closestSafePoint.x, closestSafePoint.y)
                                 allowCustomMovement = false
@@ -1133,6 +1133,7 @@ if evading then
 
                                 lastMovement.approachedPoint = getLastMovementDestination()
                             end
+                        end
                         end
                     else
                         evadeRadius = detectedSkillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
@@ -1191,12 +1192,13 @@ if evading then
                             if closestPoint ~= nil then
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
+                                if skillshot ~= nil then if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
                                 myHero:MoveTo(closestPoint.x, closestPoint.y)
                                 lastMovement.moveCommand = Point2(closestPoint.x, closestPoint.y)
                                 allowCustomMovement = false
                                 captureMovements = true
                             end
+                        end
                         end
                         end
                     end
