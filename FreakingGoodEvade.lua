@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "12"
+    local version = "13"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -53,24 +53,24 @@ dashrange = 0
 champions = {}
 champions2 = {
     ["Lux"] = {charName = "Lux", skillshots = {
-        ["Light Binding"] =  {name = "Light Binding", spellName = "LuxLightBinding", spellDelay = 250, projectileName = "LuxLightBinding_mis.troy", projectileSpeed = 1200, range = 1300, radius = 80, type = "line", cc = "true"},
+        ["Light Binding"] =  {name = "LightBinding", spellName = "LuxLightBinding", spellDelay = 250, projectileName = "LuxLightBinding_mis.troy", projectileSpeed = 1200, range = 1300, radius = 80, type = "line", cc = "true"},
         ["Lux LightStrike Kugel"] = {name = "LuxLightStrikeKugel", spellName = "LuxLightStrikeKugel", spellDelay = 250, projectileName = "LuxLightstrike_mis.troy", projectileSpeed = 1400, range = 1100, radius = 275, type = "circular", cc = "false"},
-        ["Lux Malice Cannon"] =  {name = "Lux Malice Cannon", spellName = "LuxMaliceCannon", spellDelay = 1375, projectileName = "LuxMaliceCannon_cas.troy", projectileSpeed = 50000, range = 3500, radius = 190, type = "line", cc = "true"},
+        ["Lux Malice Cannon"] =  {name = "LuxMaliceCannon", spellName = "LuxMaliceCannon", spellDelay = 1375, projectileName = "LuxMaliceCannon_cas.troy", projectileSpeed = 50000, range = 3500, radius = 190, type = "line", cc = "true"},
     }},
     ["Nidalee"] = {charName = "Nidalee", skillshots = {
-        ["Javelin Toss"] = {name = "Javelin Toss", spellName = "JavelinToss", spellDelay = 125, projectileName = "nidalee_javelinToss_mis.troy", projectileSpeed = 1300, range = 1500, radius = 60, type = "line", cc = "true"}
+        ["Javelin Toss"] = {name = "JavelinToss", spellName = "JavelinToss", spellDelay = 125, projectileName = "nidalee_javelinToss_mis.troy", projectileSpeed = 1300, range = 1500, radius = 60, type = "line", cc = "true"}
     }},
     ["Kennen"] = {charName = "Kennen", skillshots = {
-        ["Thundering Shuriken"] = {name = "Thundering Shuriken", spellName = "KennenShurikenHurlMissile1", spellDelay = 180, projectileName = "kennen_ts_mis.troy", projectileSpeed = 1700, range = 1050, radius = 50, type = "line", cc = "false"}--could be 4 if you have 2 marks
+        ["Thundering Shuriken"] = {name = "ThunderingShuriken", spellName = "KennenShurikenHurlMissile1", spellDelay = 180, projectileName = "kennen_ts_mis.troy", projectileSpeed = 1700, range = 1050, radius = 50, type = "line", cc = "false"}--could be 4 if you have 2 marks
     }},
     ["Amumu"] = {charName = "Amumu", skillshots = {
-        ["Bandage Toss"] = {name = "Bandage Toss", spellName = "BandageToss", spellDelay = 250, projectileName = "Bandage_beam.troy", projectileSpeed = 2000, range = 1100, radius = 80, type = "line", cc = "true"}
+        ["Bandage Toss"] = {name = "BandageToss", spellName = "BandageToss", spellDelay = 250, projectileName = "Bandage_beam.troy", projectileSpeed = 2000, range = 1100, radius = 80, type = "line", cc = "true"}
     }},
     ["Lee Sin"] = {charName = "LeeSin", skillshots = {
-        ["Sonic Wave"] = {name = "Sonic Wave", spellName = "BlindMonkQOne", spellDelay = 250, projectileName = "blindMonk_Q_mis_01.troy", projectileSpeed = 1800, range = 1100, radius = 70, type = "line", cc = "true"} --if he hit this he will slow you
+        ["Sonic Wave"] = {name = "SonicWave", spellName = "BlindMonkQOne", spellDelay = 250, projectileName = "blindMonk_Q_mis_01.troy", projectileSpeed = 1800, range = 1100, radius = 70, type = "line", cc = "true"} --if he hit this he will slow you
     }},
     ["Morgana"] = {charName = "Morgana", skillshots = {
-        ["Dark Binding Missile"] = {name = "Dark Binding", spellName = "DarkBindingMissile", spellDelay = 250, projectileName = "DarkBinding_mis.troy", projectileSpeed = 1200, range = 1300, radius = 80, type = "line", cc = "true"},
+        ["Dark Binding Missile"] = {name = "DarkBinding", spellName = "DarkBindingMissile", spellDelay = 250, projectileName = "DarkBinding_mis.troy", projectileSpeed = 1200, range = 1300, radius = 80, type = "line", cc = "true"},
     }},
         ["Sejuani"] = {charName = "Sejuani", skillshots = {
         ["SejuaniR"] = {name = "SejuaniR", spellName = "SejuaniGlacialPrisonCast", spellDelay = 250, projectileName = "Sejuani_R_mis.troy", projectileSpeed = 1600, range = 1200, radius = 110, type="line", cc = "true"},    
@@ -79,8 +79,8 @@ champions2 = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true"},        
     }},
     ["Gragas"] = {charName = "Gragas", skillshots = {
-        ["Barrel Roll"] = {name = "Barrel Roll", spellName = "GragasBarrelRoll", spellDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
-        ["Barrel Roll Missile"] = {name = "Barrel Roll Missile", spellName = "GragasBarrelRollMissile", spellDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
+        ["Barrel Roll"] = {name = "BarrelRoll", spellName = "GragasBarrelRoll", spellDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
+        ["Barrel Roll Missile"] = {name = "BarrelRollMissile", spellName = "GragasBarrelRollMissile", spellDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circular", cc = "never"},
     }},
         ["Syndra"] = {charName = "Syndra", skillshots = {
         ["Q"] = {name = "Q", spellName = "SyndraQ", spellDelay = 250, projectileName = "Syndra_Q_cas.troy", projectileSpeed = 500, range = 800, radius = 175, type = "circular", cc = "false"}
@@ -89,14 +89,14 @@ champions2 = {
         ["UFSlash"] = {name = "UFSlash", spellName = "UFSlash", spellDelay = 0, projectileName = "UnstoppableForce_cas.troy", projectileSpeed = 150, range = 1000, radius = 300, type="circular", cc = "true"},    
     }},
     ["Ezreal"] = {charName = "Ezreal", skillshots = {
-        ["Mystic Shot"]             = {name = "Mystic Shot",      spellName = "EzrealMysticShot",      spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
-        ["Essence Flux"]            = {name = "Essence Flux",     spellName = "EzrealEssenceFlux",     spellDelay = 250, projectileName = "Ezreal_essenceflux_mis.troy", projectileSpeed = 1500, range = 1050,  radius = 80,  type = "line", cc = "false"},
-        ["Mystic Shot (Pulsefire)"] = {name = "Mystic Shot",      spellName = "EzrealMysticShotPulse", spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
-        ["Trueshot Barrage"]        = {name = "Trueshot Barrage", spellName = "EzrealTrueshotBarrage", spellDelay = 1000, projectileName = "Ezreal_TrueShot_mis.troy",    projectileSpeed = 2000, range = 20000, radius = 160, type = "line", cc = "false"},
+        ["Mystic Shot"]             = {name = "MysticShot",      spellName = "EzrealMysticShot",      spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
+        ["Essence Flux"]            = {name = "EssenceFlux",     spellName = "EzrealEssenceFlux",     spellDelay = 250, projectileName = "Ezreal_essenceflux_mis.troy", projectileSpeed = 1500, range = 1050,  radius = 80,  type = "line", cc = "false"},
+        ["Mystic Shot (Pulsefire)"] = {name = "MysticShot",      spellName = "EzrealMysticShotPulse", spellDelay = 250, projectileName = "Ezreal_mysticshot_mis.troy",  projectileSpeed = 2000, range = 1200,  radius = 80,  type = "line", cc = "false"},
+        ["Trueshot Barrage"]        = {name = "TrueshotBarrage", spellName = "EzrealTrueshotBarrage", spellDelay = 1000, projectileName = "Ezreal_TrueShot_mis.troy",    projectileSpeed = 2000, range = 20000, radius = 160, type = "line", cc = "false"},
     }},
     ["Ahri"] = {charName = "Ahri", skillshots = {
-        ["Orb of Deception"] = {name = "Orb of Deception", spellName = "AhriOrbofDeception", spellDelay = 250, projectileName = "Ahri_Orb_mis.troy", projectileSpeed = 2500, range = 900, radius = 100, type = "line", cc = "false"},
-        ["Orb of Deception Back"] = {name = "Orb of Deception Back", spellName = "AhriOrbofDeception!", spellDelay = 250+360, projectileName = "Ahri_Orb_mis_02.troy", projectileSpeed = 915, range = 900, radius = 100, type = "line", cc = "false"},
+        ["Orb of Deception"] = {name = "OrbofDeception", spellName = "AhriOrbofDeception", spellDelay = 250, projectileName = "Ahri_Orb_mis.troy", projectileSpeed = 2500, range = 900, radius = 100, type = "line", cc = "false"},
+        ["Orb of Deception Back"] = {name = "OrbofDeceptionBack", spellName = "AhriOrbofDeception!", spellDelay = 250+360, projectileName = "Ahri_Orb_mis_02.troy", projectileSpeed = 915, range = 900, radius = 100, type = "line", cc = "false"},
         ["Charm"] = {name = "Charm", spellName = "AhriSeduce", spellDelay = 250, projectileName = "Ahri_Charm_mis.troy", projectileSpeed = 1000, range = 1000, radius = 60, type = "line", cc = "true"}
     }},
     ["Olaf"] = {charName = "Olaf", skillshots = {
@@ -104,59 +104,59 @@ champions2 = {
     }},
     ["Leona"] = {charName = "Leona", skillshots = {
           ["Zenith Blade"] = {name = "LeonaZenithBlade", spellName = "LeonaZenithBlade", spellDelay = 250, projectileName = "Leona_ZenithBlade_mis.troy", projectileSpeed = 2000, range = 950, radius = 110, type = "line", cc = "true"},
-        ["Leona Solar Flare"] = {name = "Leona Solar Flare", spellName = "LeonaSolarFlare", spellDelay = 250, projectileName = "Leona_SolarFlare_cas.troy", projectileSpeed = 2000, range = 1200, radius = 300, type = "circular", cc = "true"}
+        ["Leona Solar Flare"] = {name = "LeonaSolarFlare", spellName = "LeonaSolarFlare", spellDelay = 250, projectileName = "Leona_SolarFlare_cas.troy", projectileSpeed = 2000, range = 1200, radius = 300, type = "circular", cc = "true"}
     }},
     ["Karthus"] = {charName = "Karthus", skillshots = {
-        ["Lay Waste"] = {name = "Lay Waste", spellName = "LayWaste", spellDelay = 250, projectileName = "LayWaste_point.troy", projectileSpeed = 1750, range = 875, radius = 140, type = "circular", cc = "false"}
+        ["Lay Waste"] = {name = "LayWaste", spellName = "LayWaste", spellDelay = 250, projectileName = "LayWaste_point.troy", projectileSpeed = 1750, range = 875, radius = 140, type = "circular", cc = "false"}
     }},
     ["Chogath"] = {charName = "Chogath", skillshots = {
         ["Rupture"] = {name = "Rupture", spellName = "Rupture", spellDelay = 0, projectileName = "rupture_cas_01_red_team.troy", projectileSpeed = 950, range = 950, radius = 250, type = "circular", cc = "true"}
     }},
     ["Blitzcrank"] = {charName = "Blitzcrank", skillshots = {
-       ["Rocket Grab"] = {name = "Rocket Grab", spellName = "RocketGrab", spellDelay = 250, projectileName = "FistGrab_mis.troy", projectileSpeed = 1800, range = 1050, radius = 70, type = "line", cc = "true"}
+       ["Rocket Grab"] = {name = "RocketGrab", spellName = "RocketGrab", spellDelay = 250, projectileName = "FistGrab_mis.troy", projectileSpeed = 1800, range = 1050, radius = 70, type = "line", cc = "true"}
     }},
     ["Anivia"] = {charName = "Anivia", skillshots = {
-        ["Flash Frost"] = {name = "Flash Frost", spellName = "FlashFrostSpell", spellDelay = 250, projectileName = "cryo_FlashFrost_mis.troy", projectileSpeed = 850, range = 1100, radius = 110, type = "line", cc = "true"}
+        ["Flash Frost"] = {name = "FlashFrost", spellName = "FlashFrostSpell", spellDelay = 250, projectileName = "cryo_FlashFrost_mis.troy", projectileSpeed = 850, range = 1100, radius = 110, type = "line", cc = "true"}
     }},
     ["Zyra"] = {charName = "Zyra", skillshots = {
-        ["Grasping Roots"] = {name = "Grasping Roots", spellName = "ZyraGraspingRoots", spellDelay = 250, projectileName = "Zyra_E_sequence_impact.troy", projectileSpeed = 1150, range = 1150, radius = 70,  type = "line", cc = "true"},
-        ["Zyra Passive Death"] = {name = "Zyra Passive", spellName = "zyrapassivedeathmanager", spellDelay = 500, projectileName = "zyra_passive_plant_mis.troy", projectileSpeed = 2000, range = 1474, radius = 60,  type = "line", cc = "false"},
+        ["Grasping Roots"] = {name = "GraspingRoots", spellName = "ZyraGraspingRoots", spellDelay = 250, projectileName = "Zyra_E_sequence_impact.troy", projectileSpeed = 1150, range = 1150, radius = 70,  type = "line", cc = "true"},
+        ["Zyra Passive Death"] = {name = "ZyraPassive", spellName = "zyrapassivedeathmanager", spellDelay = 500, projectileName = "zyra_passive_plant_mis.troy", projectileSpeed = 2000, range = 1474, radius = 60,  type = "line", cc = "false"},
     }},
     ["Nautilus"] = {charName = "Nautilus", skillshots = {
-        ["Dredge Line"] = {name = "Dredge Line", spellName = "NautilusAnchorDrag", spellDelay = 250, projectileName = "Nautilus_Q_mis.troy", projectileSpeed = 2000, range = 1080, radius = 80, type = "line", cc = "true"},
+        ["Dredge Line"] = {name = "DredgeLine", spellName = "NautilusAnchorDrag", spellDelay = 250, projectileName = "Nautilus_Q_mis.troy", projectileSpeed = 2000, range = 1080, radius = 80, type = "line", cc = "true"},
     }},
     ["Caitlyn"] = {charName = "Caitlyn", skillshots = {
-        ["Piltover Peacemaker"] = {name = "Piltover Peacemaker", spellName = "CaitlynPiltoverPeacemaker", spellDelay = 625, projectileName = "caitlyn_Q_mis.troy", projectileSpeed = 2200, range = 1300, radius = 90, type = "line", cc = "false"},
-        ["Caitlyn Entrapment"] = {name = "Caitlyn Entrapment", spellName = "CaitlynEntrapment", spellDelay = 150, projectileName = "caitlyn_entrapment_mis.troy", projectileSpeed = 2000, range = 950, radius = 80, type = "line", cc = "true"},
+        ["Piltover Peacemaker"] = {name = "PiltoverPeacemaker", spellName = "CaitlynPiltoverPeacemaker", spellDelay = 625, projectileName = "caitlyn_Q_mis.troy", projectileSpeed = 2200, range = 1300, radius = 90, type = "line", cc = "false"},
+        ["Caitlyn Entrapment"] = {name = "CaitlynEntrapment", spellName = "CaitlynEntrapment", spellDelay = 150, projectileName = "caitlyn_entrapment_mis.troy", projectileSpeed = 2000, range = 950, radius = 80, type = "line", cc = "true"},
     }},
     ["Mundo"] = {charName = "DrMundo", skillshots = {
-        ["Infected Cleaver"] = {name = "Infected Cleaver", spellName = "InfectedCleaverMissile", spellDelay = 250, projectileName = "dr_mundo_infected_cleaver_mis.troy", projectileSpeed = 2000, range = 1050, radius = 75, type = "line", cc = "true"},
+        ["Infected Cleaver"] = {name = "InfectedCleaver", spellName = "InfectedCleaverMissile", spellDelay = 250, projectileName = "dr_mundo_infected_cleaver_mis.troy", projectileSpeed = 2000, range = 1050, radius = 75, type = "line", cc = "true"},
     }},
     ["Brand"] = {charName = "Brand", skillshots = {
         ["BrandBlaze"] = {name = "BrandBlaze", spellName = "BrandBlaze", spellDelay = 250, projectileName = "BrandBlaze_mis.troy", projectileSpeed = 1600, range = 1100, radius = 80, type = "line", cc = "true"},
-        ["Pillar of Flame"] = {name = "Pillar of Flame", spellName = "BrandFissure", spellDelay = 250, projectileName = "BrandPOF_tar_green.troy", projectileSpeed = 900, range = 1100, radius = 240, type = "circular", cc = "false"}
+        ["Pillar of Flame"] = {name = "PillarofFlame", spellName = "BrandFissure", spellDelay = 250, projectileName = "BrandPOF_tar_green.troy", projectileSpeed = 900, range = 1100, radius = 240, type = "circular", cc = "false"}
     }},
     ["Corki"] = {charName = "Corki", skillshots = {
-        ["Missile Barrage"] = {name = "Missile Barrage", spellName = "MissileBarrage", spellDelay = 250, projectileName = "corki_MissleBarrage_mis.troy", projectileSpeed = 2000, range = 1300, radius = 40, type = "line", cc = "false"},
-        ["Missile Barrage big"] = {name = "Missile Barrage big", spellName = "MissileBarrage!", spellDelay = 250, projectileName = "Corki_MissleBarrage_DD_mis.troy", projectileSpeed = 2000, range = 1300, radius = 40, type = "line", cc = "false"}
+        ["Missile Barrage"] = {name = "MissileBarrage", spellName = "MissileBarrage", spellDelay = 250, projectileName = "corki_MissleBarrage_mis.troy", projectileSpeed = 2000, range = 1300, radius = 40, type = "line", cc = "false"},
+        ["Missile Barrage big"] = {name = "MissileBarragebig", spellName = "MissileBarrage!", spellDelay = 250, projectileName = "Corki_MissleBarrage_DD_mis.troy", projectileSpeed = 2000, range = 1300, radius = 40, type = "line", cc = "false"}
     }},
     ["TwistedFate"] = {charName = "TwistedFate", skillshots = {
-        ["Loaded Dice"] = {name = "Loaded Dice", spellName = "WildCards", spellDelay = 250, projectileName = "Roulette_mis.troy", projectileSpeed = 1000, range = 1450, radius = 40, type = "line", cc = "false"},
+        ["Loaded Dice"] = {name = "LoadedDice", spellName = "WildCards", spellDelay = 250, projectileName = "Roulette_mis.troy", projectileSpeed = 1000, range = 1450, radius = 40, type = "line", cc = "false"},
     }},
     ["Swain"] = {charName = "Swain", skillshots = {
         ["Nevermove"] = {name = "Nevermove", spellName = "SwainShadowGrasp", spellDelay = 250, projectileName = "swain_shadowGrasp_transform.troy", projectileSpeed = 1000, range = 900, radius = 180, type = "circular", cc = "true"}
     }},
     ["Cassiopeia"] = {charName = "Cassiopeia", skillshots = {
-        ["Noxious Blast"] = {name = "Noxious Blast", spellName = "CassiopeiaNoxiousBlast", spellDelay = 250, projectileName = "CassNoxiousSnakePlane_green.troy", projectileSpeed = 500, range = 850, radius = 130, type = "circular", cc = "false"},
+        ["Noxious Blast"] = {name = "NoxiousBlast", spellName = "CassiopeiaNoxiousBlast", spellDelay = 250, projectileName = "CassNoxiousSnakePlane_green.troy", projectileSpeed = 500, range = 850, radius = 130, type = "circular", cc = "false"},
     }},
     ["Sivir"] = {charName = "Sivir", skillshots = { --hard to measure speed
-        ["Boomerang Blade"] = {name = "Boomerang Blade", spellName = "SivirQ", spellDelay = 250, projectileName = "Sivir_Base_Q_mis.troy", projectileSpeed = 1350, range = 1175, radius = 101, type = "line", cc = "false"},
+        ["Boomerang Blade"] = {name = "BoomerangBlade", spellName = "SivirQ", spellDelay = 250, projectileName = "Sivir_Base_Q_mis.troy", projectileSpeed = 1350, range = 1175, radius = 101, type = "line", cc = "false"},
     }},
     ["Ashe"] = {charName = "Ashe", skillshots = {
-        ["Enchanted Arrow"] = {name = "Enchanted Arrow", spellName = "EnchantedCrystalArrow", spellDelay = 250, projectileName = "EnchantedCrystalArrow_mis.troy", projectileSpeed = 1600, range = 25000, radius = 120, type = "line", cc = "true"},
+        ["Enchanted Arrow"] = {name = "EnchantedArrow", spellName = "EnchantedCrystalArrow", spellDelay = 250, projectileName = "EnchantedCrystalArrow_mis.troy", projectileSpeed = 1600, range = 25000, radius = 120, type = "line", cc = "true"},
     }},
     ["KogMaw"] = {charName = "KogMaw", skillshots = {
-        ["Living Artillery"] = {name = "Living Artillery", spellName = "KogMawLivingArtillery", spellDelay = 250, projectileName = "KogMawLivingArtillery_mis.troy", projectileSpeed = 1050, range = 2200, radius = 225, type = "circular", cc = "false"}
+        ["Living Artillery"] = {name = "LivingArtillery", spellName = "KogMawLivingArtillery", spellDelay = 250, projectileName = "KogMawLivingArtillery_mis.troy", projectileSpeed = 1050, range = 2200, radius = 225, type = "circular", cc = "false"}
     }},
     ["Khazix"] = {charName = "Khazix", skillshots = {
         ["KhazixW"] = {name = "KhazixW", spellName = "KhazixW", spellDelay = 250, projectileName = "Khazix_W_mis_enhanced.troy", projectileSpeed = 1700, range = 1025, radius = 70, type = "line", cc = "true"},
@@ -166,11 +166,11 @@ champions2 = {
         ["ZedShuriken"] = {name = "ZedShuriken", spellName = "ZedShuriken", spellDelay = 250, projectileName = "Zed_Q_Mis.troy", projectileSpeed = 1700, range = 925, radius = 50, type = "line", cc = "false"},
     }},
     ["Leblanc"] = {charName = "Leblanc", skillshots = {
-        ["Ethereal Chains"] = {name = "Ethereal Chains", spellName = "LeblancSoulShackle", spellDelay = 250, projectileName = "leBlanc_shackle_mis.troy", projectileSpeed = 1600, range = 960, radius = 70, type = "line", cc = "true"},
-        ["Ethereal Chains R"] = {name = "Ethereal Chains R", spellName = "LeblancSoulShackleM", spellDelay = 250, projectileName = "leBlanc_shackle_mis_ult.troy", projectileSpeed = 1600, range = 960, radius = 70, type = "line", cc = "true"},
+        ["Ethereal Chains"] = {name = "EtherealChains", spellName = "LeblancSoulShackle", spellDelay = 250, projectileName = "leBlanc_shackle_mis.troy", projectileSpeed = 1600, range = 960, radius = 70, type = "line", cc = "true"},
+        ["Ethereal Chains R"] = {name = "EtherealChainsR", spellName = "LeblancSoulShackleM", spellDelay = 250, projectileName = "leBlanc_shackle_mis_ult.troy", projectileSpeed = 1600, range = 960, radius = 70, type = "line", cc = "true"},
     }},
     ["Draven"] = {charName = "Draven", skillshots = {
-        ["Stand Aside"] = {name = "Stand Aside", spellName = "DravenDoubleShot", spellDelay = 250, projectileName = "Draven_E_mis.troy", projectileSpeed = 1400, range = 1100, radius = 130, type = "line", cc = "true"},
+        ["Stand Aside"] = {name = "StandAside", spellName = "DravenDoubleShot", spellDelay = 250, projectileName = "Draven_E_mis.troy", projectileSpeed = 1400, range = 1100, radius = 130, type = "line", cc = "true"},
         ["DravenR"] = {name = "DravenR", spellName = "DravenRCast", spellDelay = 500, projectileName = "Draven_R_mis!.troy", projectileSpeed = 2000, range = 25000, radius = 160, type = "line", cc = "false"},
     }},
     ["Elise"] = {charName = "Elise", skillshots = {
@@ -199,22 +199,22 @@ champions2 = {
         ["NamiQ"] = {name = "NamiQ", spellName = "NamiQ", spellDelay = 250, projectileName = "Nami_Q_mis.troy", projectileSpeed = 1500, range = 1625, radius = 225, type = "circular", cc = "true"}
     }},
     ["Fizz"] = {charName = "Fizz", skillshots = {
-        ["Fizz Ultimate"] = {name = "Fizz ULT", spellName = "FizzMarinerDoom", spellDelay = 250, projectileName = "Fizz_UltimateMissile.troy", projectileSpeed = 1350, range = 1275, radius = 80, type = "line", cc = "true"},
+        ["Fizz Ultimate"] = {name = "FizzULT", spellName = "FizzMarinerDoom", spellDelay = 250, projectileName = "Fizz_UltimateMissile.troy", projectileSpeed = 1350, range = 1275, radius = 80, type = "line", cc = "true"},
     }},
     ["Varus"] = {charName = "Varus", skillshots = {
-        ["Varus Q Missile"] = {name = "Varus Q Missile", spellName = "somerandomspellnamethatwillnevergetcalled", spellDelay = 0, projectileName = "VarusQ_mis.troy", projectileSpeed = 1900, range = 1600, radius = 70, type = "line", cc = "false"},
+        ["Varus Q Missile"] = {name = "VarusQMissile", spellName = "somerandomspellnamethatwillnevergetcalled", spellDelay = 0, projectileName = "VarusQ_mis.troy", projectileSpeed = 1900, range = 1600, radius = 70, type = "line", cc = "false"},
         ["VarusR"] = {name = "VarusR", spellName = "VarusR", spellDelay = 250, projectileName = "VarusRMissile.troy", projectileSpeed = 1950, range = 1250, radius = 100, type = "line", cc = "true"},
     }},
     ["Karma"] = {charName = "Karma", skillshots = {
         ["KarmaQ"] = {name = "KarmaQ", spellName = "KarmaQ", spellDelay = 250, projectileName = "TEMP_KarmaQMis.troy", projectileSpeed = 1700, range = 1050, radius = 90, type = "line", cc = "true"},
     }},
     ["Aatrox"] = {charName = "Aatrox", skillshots = {--Radius starts from 150 and scales down, so I recommend putting half of it, because you won't dodge pointblank skillshots.
-        ["Blade of Torment"] = {name = "Blade of Torment", spellName = "AatroxE", spellDelay = 250, projectileName = "AatroxBladeofTorment_mis.troy", projectileSpeed = 1200, range = 1075, radius = 75, type = "line", cc = "true"},
+        ["Blade of Torment"] = {name = "BladeofTorment", spellName = "AatroxE", spellDelay = 250, projectileName = "AatroxBladeofTorment_mis.troy", projectileSpeed = 1200, range = 1075, radius = 75, type = "line", cc = "true"},
         ["AatroxQ"] = {name = "AatroxQ", spellName = "AatroxQ", spellDelay = 250, projectileName = "AatroxQ.troy", projectileSpeed = 450, range = 650, radius = 145, type = "circular", cc = "true"},
    }},
     ["Xerath"] = {charName = "Xerath", skillshots = {
-        ["Xerath Arcanopulse"] =  {name = "Xerath Arcanopulse", spellName = "XerathArcanopulse", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 25000, range = 1025, radius = 100, type = "line", cc = "false"},
-        ["Xerath Arcanopulse Extended"] =  {name = "Xerath Arcanopulse Extended", spellName = "xeratharcanopulseextended", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 25000, range = 1625, radius = 100, type = "line", cc = "false"},
+        ["Xerath Arcanopulse"] =  {name = "XerathArcanopulse", spellName = "XerathArcanopulse", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 25000, range = 1025, radius = 100, type = "line", cc = "false"},
+        ["Xerath Arcanopulse Extended"] =  {name = "XerathArcanopulseExtended", spellName = "xeratharcanopulseextended", spellDelay = 1375, projectileName = "Xerath_Beam_cas.troy", projectileSpeed = 25000, range = 1625, radius = 100, type = "line", cc = "false"},
         ["xeratharcanebarragewrapper"] = {name = "xeratharcanebarragewrapper", spellName = "xeratharcanebarragewrapper", spellDelay = 250, projectileName = "Xerath_E_cas.troy", projectileSpeed = 300, range = 1100, radius = 265, type = "circular", cc = "false"},
         ["xeratharcanebarragewrapperext"] = {name = "xeratharcanebarragewrapperext", spellName = "xeratharcanebarragewrapperext", spellDelay = 250, projectileName = "Xerath_E_cas.troy", projectileSpeed = 300, range = 1700, radius = 265, type = "circular", cc = "false"},
     }},
@@ -248,7 +248,7 @@ champions2 = {
     }},
     ["Jinx"] = {charName = "Jinx", skillshots = {
         ["W"] =  {name = "Zap", spellName = "JinxWMissile", spellDelay = 600, projectileName = "Jinx_W_mis.troy", projectileSpeed = 3300, range = 1450, radius = 70, type = "line", cc = "true"},
-        ["R"] =  {name = "Super Mega Death Rocket", spellName = "JinxRWrapper", spellDelay = 600, projectileName = "Jinx_R_Mis.troy", projectileSpeed = 1700, range = 20000, radius = 120, type = "line", cc = "false"},
+        ["R"] =  {name = "SuperMegaDeathRocket", spellName = "JinxRWrapper", spellDelay = 600, projectileName = "Jinx_R_Mis.troy", projectileSpeed = 1700, range = 20000, radius = 120, type = "line", cc = "false"},
     }},         
 }
 
@@ -404,12 +404,12 @@ end
 GoodEvadeSkillshotConfig = scriptConfig("Good Evade skillshots", "goodEvade skillshot config")
 for i, skillShotChampion in pairs(champions) do
 for i, skillshot in pairs(skillShotChampion.skillshots) do
-                    name = tostring(skillshot.spellName)
+                    name = tostring(skillshot.name)
                     name2 = tostring(skillshot.name)
                     if skillshot.cc == "true" then
-GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 2, 0, 2, 0)
-elseif skillshot.cc == "false" then GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 1, 0, 2, 0)
-elseif skillshot.cc == "never" then GoodEvadeSkillshotConfig:addParam(name, "Dodge"..name2, SCRIPT_PARAM_SLICE, 0, 0, 2, 0)
+GoodEvadeSkillshotConfig:addParam(name, "Dodge "..name2, SCRIPT_PARAM_SLICE, 2, 0, 2, 0)
+elseif skillshot.cc == "false" then GoodEvadeSkillshotConfig:addParam(name, "Dodge "..name2, SCRIPT_PARAM_SLICE, 1, 0, 2, 0)
+elseif skillshot.cc == "never" then GoodEvadeSkillshotConfig:addParam(name, "Dodge "..name2, SCRIPT_PARAM_SLICE, 0, 0, 2, 0)
 end
 end
 end
@@ -885,7 +885,7 @@ function OnCreateObj(object)
     if object ~= nil and object.type == "obj_GeneralParticleEmmiter" then
         for i, skillShotChampion in pairs(champions) do
             for i, skillshot in pairs(skillShotChampion.skillshots) do
-                if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 then
+                if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 then
                 if skillshot.projectileName == object.name then
                     for i, detectedSkillshot in pairs(detectedSkillshots) do
                         if detectedSkillshot.skillshot.projectileName == skillshot.projectileName then
@@ -900,7 +900,7 @@ function OnCreateObj(object)
                     end
 
                     startPosition = Point2(object.x, object.z)
-                    if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
+                    if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
                         if skillshot.type == "line" then                            
                             skillshotToAdd = {object = object, startPosition = startPosition, endPosition = nil, directionVector = nil, 
                             startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, 
@@ -957,7 +957,7 @@ function OnProcessSpell(unit, spell)
                         startPosition = Point2(unit.x, unit.z)
                         endPosition = Point2(spell.endPos.x, spell.endPos.z)
                         directionVector = (endPosition - startPosition):normalized()
-                        if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
+                        if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
                             if skillshot.type == "line" then
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = startPosition + directionVector * skillshot.range,
                                 directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
@@ -1100,7 +1100,7 @@ if evading then
 
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if skillshot ~= nil then if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
+                                if skillshot ~= nil then if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestSafePoint.x, closestSafePoint.y) end end
                                 myHero:MoveTo(closestSafePoint.x, closestSafePoint.y)
                                 lastMovement.moveCommand = Point2(closestSafePoint.x, closestSafePoint.y)
                                 allowCustomMovement = false
@@ -1167,7 +1167,7 @@ if evading then
                             if closestPoint ~= nil then
                                 captureMovements = false
                                 allowCustomMovement = true
-                                if skillshot ~= nil then if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.spellName)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
+                                if skillshot ~= nil then if skillshot.spellName ~= nil then if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 and (nSkillshots > 1) and NeedDash(skillshot, true) then DashTo(closestPoint.x, closestPoint.y) end
                                 myHero:MoveTo(closestPoint.x, closestPoint.y)
                                 lastMovement.moveCommand = Point2(closestPoint.x, closestPoint.y)
                                 allowCustomMovement = false
