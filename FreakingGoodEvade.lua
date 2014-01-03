@@ -3,7 +3,7 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "16"
+    local version = "17"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -588,12 +588,12 @@ function dodgeCircularShot(skillshot)
                             end
                     end
                 end
-                return end
+                return
         elseif flashready then
         FlashTo(safeTarget.x, safeTarget.y)
-        return end
+        return 
+		end
     end
-end
  
     if getLastMovementDestination():distance(skillshot.endPosition) <= evadeRadius then
         closestTarget = skillshot.endPosition + (getLastMovementDestination() - skillshot.endPosition):normalized() * evadeRadius
@@ -1126,7 +1126,7 @@ end
 
 function OnTick()
 if not VIP_USER then
-	if evading then
+    if evading then
     for i, detectedSkillshot in pairs(detectedSkillshots) do
          if detectedSkillshot and detectedSkillshot.evading and inDangerousArea(detectedSkillshot, Point2(myHero.x, myHero.z)) then
          dodgeSkillshot(detectedSkillshot)
