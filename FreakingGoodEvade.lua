@@ -588,8 +588,10 @@ function dodgeCircularShot(skillshot)
                             end
                     end
                 end
+                return end
         elseif flashready then
         FlashTo(safeTarget.x, safeTarget.y)
+        return end
     end
 end
  
@@ -1123,6 +1125,15 @@ function getPerpendicularFootpoint(linePoint1, linePoint2, point)
 end
 
 function OnTick()
+if not VIP_USER then
+	if evading then
+    for i, detectedSkillshot in pairs(detectedSkillshots) do
+         if detectedSkillshot and detectedSkillshot.evading and inDangerousArea(detectedSkillshot, Point2(myHero.x, myHero.z)) then
+         dodgeSkillshot(detectedSkillshot)
+         end
+     end
+ end
+end
 if haveflash then 
     if myHero:CanUseSpell(flashSlot) == READY then 
         flashready = true 
@@ -1152,14 +1163,6 @@ if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHi
 end
 end
 end
-
-if evading then
-    for i, detectedSkillshot in pairs(detectedSkillshots) do
-         if detectedSkillshot and detectedSkillshot.evading and inDangerousArea(detectedSkillshot, Point2(myHero.x, myHero.z)) then
-         dodgeSkillshot(detectedSkillshot)
-         end
-     end
- end
 end
     nSkillshots = 0
     for _, detectedSkillshot in pairs(detectedSkillshots) do
