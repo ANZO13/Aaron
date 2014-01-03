@@ -3,11 +3,11 @@ require "old2dgeo"
     local AutoUpdate = true 
 
     --[[AutoUpdate Settings]]
-    local version = "15"
+    local version = "16"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
-    local versionmessage = "Changelog: Added annie ult to flash, improved dash for VIP users"
+    local versionmessage = "Changelog: Bug Fixes for free users and for the flash, also hopefuly improved Autocarry reborn support."
 
     function Update()
         DownloadFile(URL, UPDATE_TMP_FILE, UpdateCallback)
@@ -287,6 +287,7 @@ function getTarget(targetId)
 end
 
 function OnSendPacket(p)
+if VIP_USER then
     local packet = Packet(p)
     if packet:get('name') == 'S_MOVE' then
         if packet:get('sourceNetworkId') == myHero.networkID then
@@ -334,6 +335,7 @@ function OnSendPacket(p)
         end
     end
 end
+end
 
 function getLastMovementDestination()
 if VIP_USER then
@@ -380,8 +382,8 @@ if VIP_USER then
     else
         return lastMovement.destination
     end
-     else  return lastMovement.destination
-	 end
+     else return lastMovement.destination
+     end
      end
 
 function OnLoad()
@@ -488,7 +490,6 @@ end
         flashSlot = SUMMONER_2
         haveflash = true
     end
-    if haveflash and dashrange < 400 then dashrange = 400 end
 
     lastMovement = {
         destination = Point2(myHero.x, myHero.z),
@@ -645,7 +646,7 @@ end
             if getLastMovementDestination() ~= heroPosition and not isreallydangerous(skillshot) then
     dashpos = heroPosition - (heroPosition - getLastMovementDestination()):normalized() * dashrange
     evadeTo(dashpos.x, dashpos.y, true)
-            elseif NeedDash(skillshot, true) then EvadeTo(safeTarget.x, safeTarget.y, true)
+            elseif NeedDash(skillshot, true) then evadeTo(safeTarget.x, safeTarget.y, true)
             elseif HaveShield() then 
                 for i, detectedSkillshot in ipairs(detectedSkillshots) do
                     if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
@@ -668,12 +669,13 @@ if myHero.charName == "Sivir" and myHero:GetSpellData(_W) == READY then
 elseif myHero.charName == "Nocturne" and myHero:GetSpellData(_W) == READY then
     shieldslot = _W
     return true
-end
+else
 return false
+end
 end
 
 function FlashTo(x, y)
-CastSpell(flashslot, x, y)
+CastSpell(flashSlot, x, y)
 end
 
 function dodgeLineShot(skillshot)
@@ -1569,10 +1571,14 @@ end
 
 function startEvade()
     allowCustomMovement = false
-    if AutoCarry then
+    if AutoCarry then if AutoCarry.MainMenu ~= nil then
        _G.AutoCarry.CanAttack = false
         _G.AutoCarry.CanMove = false
+        elseif AutoCarry.Keys ~= nil then
+        _G.AutoCarry.MyHero:MovementEnabled(false)
+        _G.AutoCarry.MyHero:AttacksEnabled(false)
     end
+end
     _G.evade = true
     evading = true  
 end
@@ -1580,10 +1586,14 @@ end
 function stopEvade()
     --detectedSkillshots = {}
     allowCustomMovement = true
-    if AutoCarry then
+    if AutoCarry then if AutoCarry.MainMenu ~= nil then
         _G.AutoCarry.CanAttack = true
         _G.AutoCarry.CanMove = true
+    elseif AutoCarry.Keys ~= nil then
+        _G.AutoCarry.MyHero:MovementEnabled(true)
+        _G.AutoCarry.MyHero:AttacksEnabled(true)
     end
+end
     _G.evade = false
     evading = false
 end
