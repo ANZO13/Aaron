@@ -205,7 +205,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "21"
+    local version = "22"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -831,7 +831,7 @@ function dodgeLineShot(skillshot)
     if skillshot.skillshot.name == "Crescendo" then
         if dodgeCrescendo1(skillshot) then 
         alreadydodged = true
-        elseif dodgeCrescendo2(skillshot) then
+        elseif dodgeCrescendo2(skillshot, evadeTo1, evadeTo2) then
         alreadydodged = true
         end
     end
