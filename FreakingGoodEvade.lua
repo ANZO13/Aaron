@@ -317,7 +317,6 @@ champions2 = {
         ["Rupture"] = {name = "Rupture", spellName = "Rupture", spellDelay = 0, projectileName = "rupture_cas_01_red_team.troy", projectileSpeed = 950, range = 950, radius = 250, type = "circular", cc = "true", collision = "false", shieldnow = "true"}
         }},
     ["Blitzcrank"] = {charName = "Blitzcrank", skillshots = {
-        ["Rocket Grab"] = {name = "RocketGrab", spellName = "RocketGrab", spellDelay = 250, projectileName = "FistGrab_mis.troy", projectileSpeed = 1800, range = 1050, radius = 70, type = "line", cc = "true", collision = "true", shieldnow = "true"},
         ["Rocket Grab"] = {name = "RocketGrab", spellName = "RocketGrabMissile", spellDelay = 250, projectileName = "FistGrab_mis.troy", projectileSpeed = 1800, range = 1050, radius = 70, type = "line", cc = "true", collision = "true", shieldnow = "true"},
         }},
     ["Anivia"] = {charName = "Anivia", skillshots = {
