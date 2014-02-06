@@ -205,7 +205,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "18"
+    local version = "19"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -926,7 +926,6 @@ function calculateLongitudinalApproachLength(skillshot, d)
 	if preResult >= 0 then
 		result = (math.sqrt(preResult) - longitudinalDistance * v2^2) / (v1^2 - v2^2)
 		if result >= 0 then
-			PrintChat(tostring(result))
 			return result
 		end
 	end
@@ -943,7 +942,6 @@ function calculateLongitudinalRetreatLength(skillshot, d)
 	if preResult >= 0 then
 		result = (math.sqrt(preResult) + longitudinalDistance * v2^2) / (v1^2 - v2^2)
 		if result >= 0 then
-			PrintChat(tostring(result))
 			return result
 		end
 	end
