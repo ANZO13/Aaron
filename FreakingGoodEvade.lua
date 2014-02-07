@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "23"
+    local version = "24"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -443,7 +443,7 @@ champions2 = {
         ["yasuoq2"] =  {name = "yasuoq2", spellName = "yasuoq2w", spellDelay = 250, projectileName = "Yasuo_Q_windstrike_02.troy", projectileSpeed = 25000, range = 475, radius = 40, type = "line", cc = "false", collision = "false", shieldnow = "true"},
         }},
     ["Orianna"] = {charName = "Orianna", skillshots = {
-        ["OrianaIzunaCommand"] =  {name = "OrianaIzunaCommand", spellName = "OrianaIzunaCommand", spellDelay = 0, projectileName = "Oriana_Ghost_mis.troy", projectileSpeed = 1300, range = 800, radius = 80, type = "line", cc = "false", collision = "false", shieldnow = "true"},
+        ["OrianaIzunaCommand"] =  {name = "OrianaIzunaCommand", spellName = "OrianaIzunaCommand", spellDelay = 0, projectileName = "Oriana_Ghost_mis.troy", projectileSpeed = 1300, range = 800, radius = 80, type = "line", cc = "true", collision = "false", shieldnow = "true"},
         ["OrianaDetonateCommand"] =  {name = "OrianaDetonateCommand", spellName = "OrianaDetonateCommand", spellDelay = 100, projectileName = "Oriana_Shockwave_nova.troy", projectileSpeed = 400, range = 2000, radius = 400, type = "circular", cc = "true", collision = "false", shieldnow = "true"},   
         }},
     ["Ziggs"] = {charName = "Ziggs", skillshots = {
@@ -1024,10 +1024,9 @@ function OnCreateObj(object)
 
                         startPosition = Point2(object.x, object.z)
                         if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
-                            if skillshot.type == "line" then                            
-                                skillshotToAdd = {object = object, startPosition = startPosition, endPosition = nil, directionVector = nil, 
-                                startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, 
-                                skillshot = skillshot, evading = false, drawit = false}
+                            PrintChat("gotthisfar")
+                    if skillshot.type == "line" then
+                        skillshotToAdd = {object = object, startPosition = startPosition, endPosition = nil, directionVector = nil, startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true}
                             elseif skillshot.type == "circular" then
                                 endPosition = Point2(object.x, object.z)
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
@@ -1079,7 +1078,7 @@ function OnProcessSpell(unit, spell)
                     if skillshot.spellName == spell.name then
                         startPosition = Point2(spell.startPos.x, spell.startPos.z)
                         endPosition = Point2(spell.endPos.x, spell.endPos.z)
-                            if isOrianna then
+                            if isOrianna and unit.charName == "Orianna" then
                                 ball = nil
                                 for i = 1, objManager.maxObjects, 1 do
                                 local obj = objManager:GetObject(i)
@@ -1093,7 +1092,7 @@ function OnProcessSpell(unit, spell)
                                 end
                             end
                         directionVector = (endPosition - startPosition):normalized()
-                        if isOrianna then
+                        if isOrianna and unit.charName == "Orianna" then
                         if skillshot.spellName == "OrianaIzunaCommand" then skillshot.range = startPosition:distance(endPosition) end
                     end
                         if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
@@ -1149,6 +1148,14 @@ return footOfPerpendicular
 end
 
 function OnTick()
+
+
+        if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GetLatency()/2 then
+        skillshotToAdd.directionVector = (Point2(skillshotToAdd.object.x, skillshotToAdd.object.z) - skillshotToAdd.startPosition):normalized()
+        skillshotToAdd.endPosition = skillshotToAdd.startPosition + skillshotToAdd.directionVector * skillshotToAdd.skillshot.range        
+        table.insert(detectedSkillshots, skillshotToAdd)
+        skillshotToAdd = nil
+        end
     if shieldtick ~= nil then
         if GetTickCount() >= shieldtick then
             if haveShield() then
@@ -1221,14 +1228,6 @@ function OnTick()
             nEnemies = CountEnemyHeroInRange(1500)
             table.sort(enemyes, function(x,y) return GetDistance(x) < GetDistance(y) end)
 
-            if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GetLatency()+20 then
-                skillshotToAdd.directionVector = (Point2(skillshotToAdd.object.x, skillshotToAdd.object.z) - skillshotToAdd.startPosition):normalized()
-                skillshotToAdd.endPosition = skillshotToAdd.startPosition + skillshotToAdd.directionVector * skillshotToAdd.skillshot.range
-
-                table.insert(detectedSkillshots, skillshotToAdd)
-
-                skillshotToAdd = nil
-            end
 
             heroPosition = Point2(myHero.x, myHero.z)
             for i, detectedSkillshot in ipairs(detectedSkillshots) do
