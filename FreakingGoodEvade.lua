@@ -1024,7 +1024,6 @@ function OnCreateObj(object)
 
                         startPosition = Point2(object.x, object.z)
                         if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
-                            PrintChat("gotthisfar")
                     if skillshot.type == "line" then
                         skillshotToAdd = {object = object, startPosition = startPosition, endPosition = nil, directionVector = nil, startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true}
                             elseif skillshot.type == "circular" then
