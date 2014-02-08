@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "25"
+    local version = "26"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -283,8 +283,8 @@ champions2 = {
         ["Crescendo"] = {name = "Crescendo", spellName = "SonaCrescendo", spellDelay = 240, projectileName = "SonaCrescendo_mis.troy", projectileSpeed = 2400, range = 1000, radius = 160, type = "line", cc = "true", collision = "false", shieldnow = "true"},        
         }},
     ["Gragas"] = {charName = "Gragas", skillshots = {
-        ["Barrel Roll"] = {name = "BarrelRoll", spellName = "GragasBarrelRoll", spellDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "never", collision = "false", shieldnow = "false"},
-        ["Barrel Roll Missile"] = {name = "BarrelRollMissile", spellName = "GragasBarrelRollMissile", spellDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "never", collision = "false", shieldnow = "false"},
+        ["Barrel Roll"] = {name = "BarrelRoll", spellName = "GragasBarrelRoll", spellDelay = 250, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "false", collision = "false", shieldnow = "false"},
+        ["Barrel Roll Missile"] = {name = "BarrelRollMissile", spellName = "GragasBarrelRollMissile", spellDelay = 0, projectileName = "gragas_barrelroll_mis.troy", projectileSpeed = 1000, range = 1115, radius = 180, type = "circle", cc = "false", collision = "false", shieldnow = "false"},
         }},
     ["Syndra"] = {charName = "Syndra", skillshots = {
         ["Q"] = {name = "Q", spellName = "SyndraQ", spellDelay = 250, projectileName = "Syndra_Q_fall.troy", projectileSpeed = 500, range = 825, radius = 175, type = "circular", cc = "false", collision = "false", shieldnow = "true"},
@@ -309,7 +309,7 @@ champions2 = {
         }},
     ["Leona"] = {charName = "Leona", skillshots = {
         ["Zenith Blade"] = {name = "LeonaZenithBlade", spellName = "LeonaZenithBlade", spellDelay = 250, projectileName = "Leona_ZenithBlade_mis.troy", projectileSpeed = 2000, range = 950, radius = 110, type = "line", cc = "true", collision = "false", shieldnow = "true"},
-        ["Leona Solar Flare"] = {name = "LeonaSolarFlare", spellName = "LeonaSolarFlare", spellDelay = 250, projectileName = "Leona_SolarFlare_cas.troy", projectileSpeed = 2000, range = 1200, radius = 300, type = "circular", cc = "true", collision = "false", shieldnow = "true"}
+        ["Leona Solar Flare"] = {name = "LeonaSolarFlare", spellName = "LeonaSolarFlare", spellDelay = 250, projectileName = "Leona_SolarFlare_cas.troy", projectileSpeed = 1500, range = 1200, radius = 300, type = "circular", cc = "true", collision = "false", shieldnow = "true"}
         }},
     ["Karthus"] = {charName = "Karthus", skillshots = {
         ["Lay Waste"] = {name = "LayWaste", spellName = "LayWaste", spellDelay = 250, projectileName = "LayWaste_point.troy", projectileSpeed = 1750, range = 875, radius = 140, type = "circular", cc = "false", collision = "false", shieldnow = "true"}
@@ -613,7 +613,9 @@ end
 
     function OnLoad()
         ball = nil
-        GoodEvadeConfig = scriptConfig("Good Evade", "goodEvade")
+        GoodEvadeConfig = scriptConfig("Freaking Good Evade", "Freaking Good Evade")
+        GoodEvadeConfig:addParam("lineallways", "Allways try to dodge line skillshots", SCRIPT_PARAM_ONOFF, true)
+        GoodEvadeConfig:addParam("fowdelay", "Delay for skillshots in FOW", SCRIPT_PARAM_SLICE, 1, 1, 20, 0)
         GoodEvadeConfig:addParam("dodgeEnabled", "Dodge Skillshots", SCRIPT_PARAM_ONOFF, true)
         GoodEvadeConfig:addParam("drawEnabled", "Draw Skillshots", SCRIPT_PARAM_ONOFF, true)
         GoodEvadeConfig:addParam("dodgeCConly", "Dodge CC only spells", SCRIPT_PARAM_ONKEYDOWN, false, 32)
@@ -632,7 +634,7 @@ end
                 end
             end
         end
-        GoodEvadeSkillshotConfig = scriptConfig("Good Evade skillshots", "goodEvade skillshot config")
+        GoodEvadeSkillshotConfig = scriptConfig("FGE skillshots", "FGE skillshots config")
         for i, skillShotChampion in pairs(champions) do
             for i, skillshot in pairs(skillShotChampion.skillshots) do
                 name = tostring(skillshot.name)
@@ -870,6 +872,8 @@ function dodgeLineShot(skillshot)
         then alreadydodged = true
     elseif lineSkillshot3(skillshot, evadeTo1, evadeTo2)
         then alreadydodged = true
+    elseif lineSkillshot4(skillshot, evadeTo1, evadeTo2)
+        then alreadydodged = true
     end
     end
 end
@@ -1022,15 +1026,15 @@ function OnCreateObj(object)
                             end
                         end
 
-                        startPosition = Point2(object.x, object.z)
                         if GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 2 or (GoodEvadeSkillshotConfig[tostring(skillshot.name)] == 1 and nEnemies <= 2 and not (GoodEvadeConfig.dodgeCConly or GoodEvadeConfig.dodgeCConly2)) then
                     if skillshot.type == "line" then
-                        skillshotToAdd = {object = object, startPosition = startPosition, endPosition = nil, directionVector = nil, startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true}
+                        skillshotToAdd = {object = object, startPosition = nil, endPosition = nil, directionVector = nil, startTick = GetTickCount(), endTick = GetTickCount() + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true, alreadydashed = false}
                             elseif skillshot.type == "circular" then
                                 endPosition = Point2(object.x, object.z)
+                                startPosition = Point2(object.x, object.z)
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
                                     directionVector = (endPosition - startPosition):normalized(), startTick = GetTickCount() + skillshot.spellDelay, 
-                                    endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = false})
+                                    endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = false, alreadydashed = false})
                             end
                         end
                         return
@@ -1098,16 +1102,16 @@ function OnProcessSpell(unit, spell)
                             if skillshot.type == "line" then
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = startPosition + directionVector * skillshot.range,
                                     directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
-                                    endTick = GetTickCount() + skillshot.spellDelay + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true})
+                                    endTick = GetTickCount() + skillshot.spellDelay + skillshot.range/skillshot.projectileSpeed*1000, skillshot = skillshot, evading = false, drawit = true, alreadydashed = false})
                             elseif skillshot.type == "circular" then
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
                                     directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
-                                    endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = true})
+                                    endTick = GetTickCount() + skillshot.spellDelay + skillshot.projectileSpeed, skillshot = skillshot, evading = false, drawit = true, alreadydashed = false})
                             else
                                 local ssrange = endPosition:distance(startPosition)
                                 table.insert(detectedSkillshots, {startPosition = startPosition, endPosition = endPosition, 
                                     directionVector = directionVector, startTick = GetTickCount() + skillshot.spellDelay, 
-                                    endTick = GetTickCount() + skillshot.spellDelay + (skillshot.projectileSpeed * (ssrange/skillshot.range)), skillshot = skillshot, evading = false, drawit = true})
+                                    endTick = GetTickCount() + skillshot.spellDelay + (skillshot.projectileSpeed * (ssrange/skillshot.range)), skillshot = skillshot, evading = false, drawit = true, alreadydashed = false})
                             end
                         end
                         return
@@ -1149,7 +1153,9 @@ end
 function OnTick()
 
 
-        if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GetLatency()/2 then
+        if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GoodEvadeConfig.fowdelay and skillshotToAdd.startPosition == nil then
+            skillshotToAdd.startPosition = Point2(skillshotToAdd.object.x, skillshotToAdd.object.z)
+        elseif skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= (GoodEvadeConfig.fowdelay+1) then
         skillshotToAdd.directionVector = (Point2(skillshotToAdd.object.x, skillshotToAdd.object.z) - skillshotToAdd.startPosition):normalized()
         skillshotToAdd.endPosition = skillshotToAdd.startPosition + skillshotToAdd.directionVector * skillshotToAdd.skillshot.range        
         table.insert(detectedSkillshots, skillshotToAdd)
@@ -1653,8 +1659,9 @@ end
 end
 -- beggining of circular skillshot dodging functions --
 function mainCircularskillshot5(skillshot, safeTarget)
-    if NeedDash(skillshot, true) then 
+    if NeedDash(skillshot, true) and not skillshot.alreadydashed then 
         evadeTo(safeTarget.x, safeTarget.y, true)
+        skillshot.alreadydashed = true
         return true
         else return false
     end
@@ -1662,7 +1669,7 @@ function mainCircularskillshot5(skillshot, safeTarget)
 end
 
     function mainCircularskillshot4(skillshot, heroPosition, moveableDistance, evadeRadius, safeTarget)
-        if NeedDash(skillshot, true) then
+        if NeedDash(skillshot, true) and not skillshot.alreadydashed then
             moveableDistance = (myHero.ms * math.max(skillshot.endTick - GetTickCount() - GetLatency()/2, 0) / 1000) + dashrange
             evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
 
@@ -1710,6 +1717,7 @@ closestPoint = findBestDirection(skillshot, getLastMovementDestination(), possib
 if closestPoint ~= nil then
     closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
     evadeTo(closestPoint.x, closestPoint.y, true)
+    skillshot.alreadydashed = true
     return true
     else return false
     end
@@ -1719,10 +1727,11 @@ if closestPoint ~= nil then
 end
 
 function mainCircularskillshot3(skillshot, heroPosition)
-    if getLastMovementDestination() ~= heroPosition and NeedDash(skillshot, true) then
+    if getLastMovementDestination():distance(heroPosition) > 20 and NeedDash(skillshot, true) and not skillshot.alreadydashed then
         dashpos = getLastMovementDestination() + (getLastMovementDestination() - heroPosition):normalized() * dashrange
         if dashpos:distance(skillshot.endPosition) > skillshot.skillshot.radius and not InsideTheWall(dashpos) then
         evadeTo(dashpos.x, dashpos.y, true)
+        skillshot.alreadydashed = true
         return true
         else return false
         end
@@ -1803,7 +1812,7 @@ if closestPoint ~= nil then
     closestPoint = closestPoint + (closestPoint - heroPosition):normalized() * smoothing
     evadeTo(closestPoint.x, closestPoint.y)
     return true
-    else return
+    else return false
 end
 return false
 end
@@ -1831,10 +1840,11 @@ function AM1(skillshot)
     end
 
 function AM2(skillshot, heroPosition)
-    if flashready and getLastMovementDestination() ~= heroPosition then
+    if flashready and getLastMovementDestination():distance(heroPosition) > 20 and not skillshot.alreadydashed then
         dashpos = getLastMovementDestination() + (getLastMovementDestination() - heroPosition):normalized() * 400
         if dashpos:distance(skillshot.endPosition) > skillshot.skillshot.radius and not InsideTheWall(dashpos) then
         FlashTo(dashpos.x, dashpos.y)
+        skillshot.alreadydashed = true
         for i, detectedSkillshot in ipairs(detectedSkillshots) do
             if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
                 table.remove(detectedSkillshots, i)
@@ -1853,8 +1863,9 @@ function AM2(skillshot, heroPosition)
 end
 
 function AM3(skillshot, safeTarget)
-    if flashready then
+    if flashready and not skillshot.alreadydashed then
         FlashTo(safeTarget.x, safeTarget.y)
+        skillshot.alreadydashed = true
         for i, detectedSkillshot in ipairs(detectedSkillshots) do
             if detectedSkillshot.skillshot.name == skillshot.skillshot.name then
                 table.remove(detectedSkillshots, i)
@@ -2006,6 +2017,7 @@ function lineSkillshot2(skillshot)
 end
 
 function lineSkillshot3(skillshot, evadeTo1, evadeTo2)
+    if not skillshot.alreadydashed then
     local safeTarget = nil
     if NeedDash(skillshot, true)
         then if (evadeTo1:distance(lastMovement.destination) > evadeTo2:distance(lastMovement.destination)) and not InsideTheWall(evadeTo2) then
@@ -2019,12 +2031,46 @@ function lineSkillshot3(skillshot, evadeTo1, evadeTo2)
         end
         if safeTarget ~= nil then
             evadeTo(safeTarget.x, safeTarget.y, true)
+            skillshot.alreadydashed = true
             return true
             else return false
         end
         else return false
     end
+else return false
+end
 return false
+end
+
+function lineSkillshot4(skillshot, evadeTo1, evadeTo2)
+    if GoodEvadeConfig.lineallways then
+        if skillshotLine:distance(evadeTo1) >= skillshotLine:distance(evadeTo2) then
+            if not InsideTheWall(evadeTo1) then
+                safeTarget = evadeTo1
+            elseif not InsideTheWall(evadeTo2) then
+                safeTarget = evadeTo2
+            else
+                safeTarget = getLastMovementDestination()
+            end
+
+        else
+            if not InsideTheWall(evadeTo2) then
+                safeTarget = evadeTo2
+            elseif not InsideTheWall(evadeTo1) then
+                safeTarget = evadeTo1
+            else
+                safeTarget = getLastMovementDestination()
+            end
+        end
+
+        if safeTarget ~= nil then
+            evadeTo(safeTarget.x, safeTarget.y)
+            return true
+            else return false
+            end
+            else return false
+            end
+            return false
 end
 
 function dodgeCrescendo1(skillshot)
@@ -2051,7 +2097,7 @@ end
 
 function dodgeCrescendo2(skillshot, evadeTo1, evadeTo2)
 local safeTarget = nil
-    if haveflash and useflash
+    if haveflash and useflash and not skillshot.alreadydashed
         then if (evadeTo1:distance(lastMovement.destination) > evadeTo2:distance(lastMovement.destination)) and not InsideTheWall(evadeTo2) then
             safeTarget = evadeTo2
         elseif (evadeTo2:distance(lastMovement.destination) > evadeTo1:distance(lastMovement.destination)) and not InsideTheWall(evadeTo1) then
@@ -2063,6 +2109,7 @@ local safeTarget = nil
         end
         if safeTarget ~= nil then
             FlashTo(safeTarget.x, safeTarget.y)
+            skillshot.alreadydashed = true
             return true
             else return false
         end
