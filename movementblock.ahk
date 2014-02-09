@@ -3,7 +3,6 @@
 #Persistent
 #NoEnv
 
-F5::Suspend
 
 RButton::
 {

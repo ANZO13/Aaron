@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "26"
+    local version = "27"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -248,7 +248,6 @@ class 'CollisionPE'
 end
 
 _G.evade = false
-evadeBuffer = 15
 moveBuffer = 25
 smoothing = 75
 dashrange = 0
@@ -460,7 +459,7 @@ champions2 = {
         ["R"] =  {name = "SuperMegaDeathRocket", spellName = "JinxRWrapper", spellDelay = 600, projectileName = "Jinx_R_Mis.troy", projectileSpeed = 1700, range = 20000, radius = 120, type = "line", cc = "false", collision = "false", shieldnow = "true"},
         }},         
         }
-
+wrotedisclaimer = false
 enemyes = {}
 nAllies = 0
 allies = {}
@@ -483,6 +482,8 @@ lastspell = "Q"
 useflash = false
 shieldslot = _E
 shieldtick = nil
+alreadywritten = false
+thatfile = SCRIPT_PATH.."movementblock.txt"
 
 function getTarget(targetId)
     if targetId ~= 0 and targetId ~= nil then
@@ -586,7 +587,7 @@ function getLastMovementDestination()
         else
             return lastMovement.destination
         end
-        else return lastMovement.destination
+        else return 
     end
 end
 function CheckBall(obj)
@@ -614,6 +615,7 @@ end
     function OnLoad()
         ball = nil
         GoodEvadeConfig = scriptConfig("Freaking Good Evade", "Freaking Good Evade")
+        GoodEvadeConfig:addParam("evadeBuffer", "Increase Skillshot width by...", SCRIPT_PARAM_SLICE, 15, 0, 50, 0 )
         GoodEvadeConfig:addParam("lineallways", "Allways try to dodge line skillshots", SCRIPT_PARAM_ONOFF, true)
         GoodEvadeConfig:addParam("fowdelay", "Delay for skillshots in FOW", SCRIPT_PARAM_SLICE, 1, 1, 20, 0)
         GoodEvadeConfig:addParam("dodgeEnabled", "Dodge Skillshots", SCRIPT_PARAM_ONOFF, true)
@@ -623,6 +625,7 @@ end
         GoodEvadeConfig:addParam("resetdodge", "Reset Dodge", SCRIPT_PARAM_ONKEYDOWN, false, 17)
         GoodEvadeConfig:addParam("usedashes", "Use Dash to dodge spells", SCRIPT_PARAM_ONOFF, true)
         GoodEvadeConfig:addParam("useflash", "Use Flash to dodge dangerous spells", SCRIPT_PARAM_ONOFF, true)
+        GoodEvadeConfig:addParam("freemovementblock", "Free Users Movement Block", SCRIPT_PARAM_ONOFF, false)
         GoodEvadeConfig:permaShow("dodgeEnabled")
         for i = 1, heroManager.iCount do
             local hero = heroManager:GetHero(i)
@@ -802,7 +805,7 @@ function dodgeCircularShot(skillshot)
     heroPosition = Point2(myHero.x, myHero.z)
 
     moveableDistance = myHero.ms * math.max(skillshot.endTick - GetTickCount() - GetLatency()/2, 0) / 1000
-    evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
+    evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer + moveBuffer
 
     safeTarget = skillshot.endPosition + (heroPosition - skillshot.endPosition):normalized() * evadeRadius
 
@@ -853,7 +856,7 @@ function dodgeLineShot(skillshot)
     skillshot.evading = true
     skillshotLine = Line2(skillshot.startPosition, skillshot.endPosition)
     distanceFromSkillshotPath = skillshotLine:distance(heroPosition)
-    evadeDistance = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
+    evadeDistance = skillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer + moveBuffer
     normalVector = Point2(skillshot.directionVector.y, -skillshot.directionVector.x):normalized()
     nessecaryMoveWidth = evadeDistance - distanceFromSkillshotPath
     evadeTo1 = heroPosition + normalVector * nessecaryMoveWidth
@@ -948,7 +951,7 @@ function findBestDirection(skillshot, referencePoint, possiblePoints)
         if point ~= nil and skillshot ~= nil then
             side2 = getSideOfLine(skillshot.startPosition, skillshot.endPosition, point)
             distToSkillshot = Line2(skillshot.startPosition, skillshot.endPosition):distance(point)
-            mindistSkillshot = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer
+            mindistSkillshot = skillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer
             distance = point:distance(referencePoint)
             if (closestDistance == nil or distance <= closestDistance) and not InsideTheWall(point) 
                 and distToSkillshot > mindistSkillshot and (side1 == side2 or side1 == 0) then
@@ -997,10 +1000,10 @@ function inDangerousArea(skillshot, coordinate)
     if skillshot.skillshot.type == "line" then
         return inRange(skillshot, coordinate) 
         and not skillshotHasPassed(skillshot, coordinate) 
-        and Line2(skillshot.startPosition, skillshot.endPosition):distance(coordinate) < (skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer) 
+        and Line2(skillshot.startPosition, skillshot.endPosition):distance(coordinate) < (skillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer) 
         and coordinate:distance(skillshot.startPosition + skillshot.directionVector) <= coordinate:distance(skillshot.startPosition - skillshot.directionVector)
     else
-        return coordinate:distance(skillshot.endPosition) <= skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer
+        return coordinate:distance(skillshot.endPosition) <= skillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer
     end
 end
 
@@ -1151,8 +1154,23 @@ return footOfPerpendicular
 end
 
 function OnTick()
-
-
+	if GoodEvadeConfig.freemovementblock then
+		if evading and not alreadywritten then
+			local file = io.open(thatfile, "w")
+			file:write("1")
+			file:close()
+			alreadywritten = true
+		elseif not evading and alreadywritten then
+			local file = io.open(thatfile, "w")
+			file:write("0")
+			file:close()
+			alreadywritten = false
+		end
+		if not wrotedisclaimer then
+			PrintChat("<font color=\"#FF0000\" >You just enabled free user movement block, this function will only work if you followed tutorial in main thread of the script before allowing it.</font>")
+		wrotedisclaimer = true
+		end
+	end
         if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GoodEvadeConfig.fowdelay and skillshotToAdd.startPosition == nil then
             skillshotToAdd.startPosition = Point2(skillshotToAdd.object.x, skillshotToAdd.object.z)
         elseif skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= (GoodEvadeConfig.fowdelay+1) then
@@ -1199,9 +1217,9 @@ function OnTick()
                                 then lastMovement.destination = Point2(mousePos.x, mousePos.z)
                                 lastset = GetTickCount() + 100
                             end
-                            if evadeBuffer < 40 then evadeBuffer = 40
                             end
-                        elseif evadeBuffer == 40 then evadeBuffer = 15
+                            if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+                        elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
                         end
 
                     end
@@ -1212,13 +1230,25 @@ function OnTick()
                                 then lastMovement.destination = Point2(mousePos.x, mousePos.z)
                                 lastset = GetTickCount() + 100
                             end
-                            if evadeBuffer < 40 then evadeBuffer = 40
-                            end
-                        elseif evadeBuffer == 40 then evadeBuffer = 15
+                        end
+                       	if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+                        elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
                         end
                     end
                 end
-            end
+            elseif MMA_Loaded ~= nil then
+            	if _G.MMA_Orbwalker or _G.MMA_HybridMode or _G.MMA_LaneClear or _G.MMA_LastHit then
+            		if not VIP_USER then
+                            if lastset < GetTickCount()
+                                then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+                                lastset = GetTickCount() + 100
+                            end
+                            end
+                            if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+                        elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+                        end
+                    end
+                end
             nSkillshots = 0
             for _, detectedSkillshot in pairs(detectedSkillshots) do
                 if detectedSkillshot then nSkillshots = nSkillshots + 1 end
@@ -1260,9 +1290,9 @@ function OnTick()
 
                             elseif lastMovement.approachedPoint ~= getLastMovementDestination() then
                                 footpoint = getPerpendicularFootpoint(detectedSkillshot.startPosition, detectedSkillshot.endPosition, getLastMovementDestination())
-                                closestSafePoint = footpoint + Point2(-detectedSkillshot.directionVector.y, detectedSkillshot.directionVector.x) * (detectedSkillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer)
+                                closestSafePoint = footpoint + Point2(-detectedSkillshot.directionVector.y, detectedSkillshot.directionVector.x) * (detectedSkillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer + moveBuffer)
                                 if (getSideOfLine(detectedSkillshot.startPosition, detectedSkillshot.endPosition, heroPosition) ~= getSideOfLine(detectedSkillshot.startPosition, detectedSkillshot.endPosition, closestSafePoint)) then
-                                closestSafePoint = footpoint - Point2(-detectedSkillshot.directionVector.y, detectedSkillshot.directionVector.x) * (detectedSkillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer)
+                                closestSafePoint = footpoint - Point2(-detectedSkillshot.directionVector.y, detectedSkillshot.directionVector.x) * (detectedSkillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer + moveBuffer)
                             end
 
                             captureMovements = false
@@ -1277,7 +1307,7 @@ function OnTick()
                         end
                     end
                 else
-                    evadeRadius = detectedSkillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
+                    evadeRadius = detectedSkillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer + moveBuffer
                     directionVector = (heroPosition - detectedSkillshot.endPosition):normalized()
                     tangentDirectionVector = Point2(-directionVector.y, directionVector.x)
                     movementTargetSideOfLine = getSideOfLine(heroPosition, heroPosition + tangentDirectionVector, getLastMovementDestination())
@@ -1609,7 +1639,8 @@ end
 
 function startEvade()
     allowCustomMovement = false
-    if AutoCarry then if AutoCarry.MainMenu ~= nil then
+    if AutoCarry 
+    	then if AutoCarry.MainMenu ~= nil then
         if AutoCarry.CanAttack ~= nil then
      _G.AutoCarry.CanAttack = false
      _G.AutoCarry.CanMove = false
@@ -1620,6 +1651,9 @@ function startEvade()
     _G.AutoCarry.MyHero:AttacksEnabled(false)
 end
 end
+elseif MMA_Loaded then
+	_G.MMA_AttackAvailable = false
+	_G.MMA_AbleToMove = false
 end
 _G.evade = true
 evading = true
@@ -1638,6 +1672,9 @@ function stopEvade()
     _G.AutoCarry.MyHero:AttacksEnabled(true)
 end
 end
+elseif MMA_Loaded then
+	_G.MMA_AttackAvailable = true
+	_G.MMA_AbleToMove = true
 end
 _G.evade = false
 evading = false
@@ -1671,7 +1708,7 @@ end
     function mainCircularskillshot4(skillshot, heroPosition, moveableDistance, evadeRadius, safeTarget)
         if NeedDash(skillshot, true) and not skillshot.alreadydashed then
             moveableDistance = (myHero.ms * math.max(skillshot.endTick - GetTickCount() - GetLatency()/2, 0) / 1000) + dashrange
-            evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + evadeBuffer + moveBuffer
+            evadeRadius = skillshot.skillshot.radius + hitboxSize / 2 + GoodEvadeConfig.evadeBuffer + moveBuffer
 
             safeTarget = skillshot.endPosition + (heroPosition - skillshot.endPosition):normalized() * evadeRadius 
 if getLastMovementDestination():distance(skillshot.endPosition) <= evadeRadius then
