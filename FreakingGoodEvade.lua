@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "27"
+    local version = "28"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -587,7 +587,7 @@ function getLastMovementDestination()
         else
             return lastMovement.destination
         end
-        else return 
+        else return lastMovement.destination
     end
 end
 function CheckBall(obj)
