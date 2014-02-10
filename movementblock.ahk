@@ -3,7 +3,6 @@
 #Persistent
 #NoEnv
 
-
 RButton::
 {
 IfWinActive, League of Legends (TM) Client
