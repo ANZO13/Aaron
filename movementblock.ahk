@@ -2,10 +2,11 @@
 #installKeybdHook
 #Persistent
 #NoEnv
+alreadyrun := false
+Hotkey, IfWinActive, League of Legends (TM) Client
+Hotkey, RButton, Bullshit
 
-RButton::
-{
-IfWinActive, League of Legends (TM) Client
+Bullshit:
 {
 FileReadLine, line, movementblock.txt, 1
 if line = 1
@@ -14,23 +15,23 @@ return
 }
 else
 {
-Send {l down}
+Send {MButton down}
 sleep 3
-send {l up}
+send {MButton up}
 }
+SetTimer, Bullshit2, 250
+alreadyrun := 0
 }
-else
-Send {RButton}
 
-sleep 100
-loop
+
+
+Bullshit2:
+{
+if alreadyrun = 1
 {
 GetKeyState, state, RButton, P
 if state = D
 {
-sleep 100
-IfWinActive, League of Legends (TM) Client
-{
 FileReadLine, line, movementblock.txt, 1
 if line = 1
 {
@@ -38,12 +39,13 @@ return
 }
 else
 {
-Send {l down}
+Send {MButton down}
 sleep 3
-send {l up}
+send {MButton up}
 }
 }
+else 
+SetTimer, Bullshit2, Off
 }
-else break
-}
+else alreadyrun := 1
 }
