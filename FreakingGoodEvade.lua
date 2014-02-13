@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "31"
+    local version = "32"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -1227,7 +1227,7 @@ function OnTick()
             			end
             			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             			end
-            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer then GoodEvadeConfig.evadeBuffer = currentbuffer
             			bufferset = false
             		end
             	elseif AutoCarry.Keys ~= nil then
@@ -1244,7 +1244,7 @@ function OnTick()
             			end
             			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             			end
-            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer then GoodEvadeConfig.evadeBuffer = currentbuffer
             			bufferset = false
             		end
             	end
@@ -1262,7 +1262,7 @@ function OnTick()
             		end
             		if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             		end
-            	elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            	elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer then GoodEvadeConfig.evadeBuffer = currentbuffer
             		bufferset = false
             	end
             end
