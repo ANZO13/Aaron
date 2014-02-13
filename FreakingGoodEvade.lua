@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "29"
+    local version = "30"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -484,6 +484,8 @@ shieldslot = _E
 shieldtick = nil
 alreadywritten = false
 thatfile = SCRIPT_PATH.."movementblock.txt"
+currentbuffer = 0
+bufferset = false
 
 function getTarget(targetId)
     if targetId ~= 0 and targetId ~= nil then
@@ -758,6 +760,7 @@ end
         player:SetVisionRadius(1700)
 
         GoodEvadeConfig.dodgeEnabled = true
+        currentbuffer = GoodEvadeConfig.evadeBuffer
 
         PrintChat(" >> Freaking Good Evade v"..version.." loaded")
         PrintChat(versionmessage)
@@ -1208,7 +1211,11 @@ function OnTick()
                 stopEvade()
                 detectedSkillshots = {}
             end
-            if AutoCarry ~= nil then 
+            if AutoCarry ~= nil then
+            	if not bufferset then
+            		currentbuffer = GoodEvadeConfig.evadeBuffer
+            		bufferset = true
+            	end
             	if AutoCarry.MainMenu ~= nil then 
             		if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
             			then
@@ -1218,9 +1225,10 @@ function OnTick()
             					lastset = GetTickCount() + 100
             				end
             			end
-            			if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+            			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             			end
-            		elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+            		elseif GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            			bufferset = false
             		end
             	elseif AutoCarry.Keys ~= nil then
             		if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
@@ -1230,12 +1238,17 @@ function OnTick()
             					lastset = GetTickCount() + 100
             				end
             			end
-            			if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+            			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             			end
-            		elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+            		elseif GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            			bufferset = false
             		end
             	end
             elseif MMA_Loaded ~= nil then
+            	if not bufferset then
+            		currentbuffer = GoodEvadeConfig.evadeBuffer
+            		bufferset = true
+            	end
             	if _G.MMA_Orbwalker or _G.MMA_HybridMode or _G.MMA_LaneClear or _G.MMA_LastHit then
             		if not VIP_USER then
             			if lastset < GetTickCount()
@@ -1243,9 +1256,10 @@ function OnTick()
             				lastset = GetTickCount() + 100
             			end
             		end
-            		if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+            		if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             		end
-            	elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+            	elseif GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            		bufferset = false
             	end
             end
             nSkillshots = 0
