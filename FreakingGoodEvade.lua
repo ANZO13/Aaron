@@ -1209,46 +1209,45 @@ function OnTick()
                 detectedSkillshots = {}
             end
             if AutoCarry ~= nil then 
-                if AutoCarry.MainMenu ~= nil then 
-                    if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
-                        then
-                        if not VIP_USER then
-                            if lastset < GetTickCount()
-                                then lastMovement.destination = Point2(mousePos.x, mousePos.z)
-                                lastset = GetTickCount() + 100
-                            end
-                            end
-                            if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
-                        elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
-                        end
-
-                    end
-                elseif AutoCarry.Keys ~= nil then
-                    if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
-                        if not VIP_USER then
-                            if lastset < GetTickCount()
-                                then lastMovement.destination = Point2(mousePos.x, mousePos.z)
-                                lastset = GetTickCount() + 100
-                            end
-                        end
-                       	if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
-                        elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
-                        end
-                    end
-                end
+            	if AutoCarry.MainMenu ~= nil then 
+            		if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
+            			then
+            			if not VIP_USER then
+            				if lastset < GetTickCount()
+            					then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+            					lastset = GetTickCount() + 100
+            				end
+            			end
+            			if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+            			end
+            		elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+            		end
+            	elseif AutoCarry.Keys ~= nil then
+            		if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
+            			if not VIP_USER then
+            				if lastset < GetTickCount()
+            					then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+            					lastset = GetTickCount() + 100
+            				end
+            			end
+            			if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+            			end
+            		elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+            		end
+            	end
             elseif MMA_Loaded ~= nil then
             	if _G.MMA_Orbwalker or _G.MMA_HybridMode or _G.MMA_LaneClear or _G.MMA_LastHit then
             		if not VIP_USER then
-                            if lastset < GetTickCount()
-                                then lastMovement.destination = Point2(mousePos.x, mousePos.z)
-                                lastset = GetTickCount() + 100
-                            end
-                            end
-                            if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
-                        elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
-                        end
-                    end
-                end
+            			if lastset < GetTickCount()
+            				then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+            				lastset = GetTickCount() + 100
+            			end
+            		end
+            		if GoodEvadeConfig.evadeBuffer < 30 then GoodEvadeConfig.evadeBuffer = 30
+            		end
+            	elseif GoodEvadeConfig.evadeBuffer == 30 then GoodEvadeConfig.evadeBuffer = 15
+            	end
+            end
             nSkillshots = 0
             for _, detectedSkillshot in pairs(detectedSkillshots) do
                 if detectedSkillshot then nSkillshots = nSkillshots + 1 end
