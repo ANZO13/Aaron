@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "28"
+    local version = "29"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
