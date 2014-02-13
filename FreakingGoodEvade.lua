@@ -206,7 +206,7 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "30"
+    local version = "31"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -1212,13 +1212,13 @@ function OnTick()
                 detectedSkillshots = {}
             end
             if AutoCarry ~= nil then
-            	if not bufferset then
-            		currentbuffer = GoodEvadeConfig.evadeBuffer
-            		bufferset = true
-            	end
             	if AutoCarry.MainMenu ~= nil then 
             		if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
             			then
+            			if not bufferset then
+            				currentbuffer = GoodEvadeConfig.evadeBuffer
+            				bufferset = true
+            			end
             			if not VIP_USER then
             				if lastset < GetTickCount()
             					then lastMovement.destination = Point2(mousePos.x, mousePos.z)
@@ -1227,11 +1227,15 @@ function OnTick()
             			end
             			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             			end
-            		elseif GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
             			bufferset = false
             		end
             	elseif AutoCarry.Keys ~= nil then
             		if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
+            			if not bufferset then
+            				currentbuffer = GoodEvadeConfig.evadeBuffer
+            				bufferset = true
+            			end
             			if not VIP_USER then
             				if lastset < GetTickCount()
             					then lastMovement.destination = Point2(mousePos.x, mousePos.z)
@@ -1240,16 +1244,16 @@ function OnTick()
             			end
             			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             			end
-            		elseif GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
             			bufferset = false
             		end
             	end
             elseif MMA_Loaded ~= nil then
-            	if not bufferset then
-            		currentbuffer = GoodEvadeConfig.evadeBuffer
-            		bufferset = true
-            	end
             	if _G.MMA_Orbwalker or _G.MMA_HybridMode or _G.MMA_LaneClear or _G.MMA_LastHit then
+            		if not bufferset then
+            			currentbuffer = GoodEvadeConfig.evadeBuffer
+            			bufferset = true
+            		end
             		if not VIP_USER then
             			if lastset < GetTickCount()
             				then lastMovement.destination = Point2(mousePos.x, mousePos.z)
@@ -1258,7 +1262,7 @@ function OnTick()
             		end
             		if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
             		end
-            	elseif GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
+            	elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer - 15 then GoodEvadeConfig.evadeBuffer = currentbuffer - 15
             		bufferset = false
             	end
             end
