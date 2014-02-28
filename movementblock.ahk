@@ -2,11 +2,15 @@
 #installKeybdHook
 #Persistent
 #NoEnv
-alreadyrun := false
+alreadyrun := 0
+canrun := 0
+canrun2 := 0
 Hotkey, IfWinActive, League of Legends (TM) Client
 Hotkey, RButton, Bullshit
 
 Bullshit:
+{
+if canrun = 1
 {
 FileReadLine, line, movementblock.txt, 1
 if line = 1
@@ -15,17 +19,24 @@ return
 }
 else
 {
+Send {RButton down}
 Send {MButton down}
 sleep 3
+Send {RButton up}
 send {MButton up}
 }
 SetTimer, Bullshit2, 250
 alreadyrun := 0
 }
+else
+canrun := 1
+}
 
 
 
 Bullshit2:
+{
+if canrun2 = 1
 {
 if alreadyrun = 1
 {
@@ -39,8 +50,10 @@ return
 }
 else
 {
+Send {RButton down}
 Send {MButton down}
 sleep 3
+send {RButton up}
 send {MButton up}
 }
 }
@@ -48,4 +61,7 @@ else
 SetTimer, Bullshit2, Off
 }
 else alreadyrun := 1
+}
+else
+canrun2 := 1
 }
