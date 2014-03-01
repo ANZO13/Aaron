@@ -15,14 +15,14 @@ if canrun = 1
 FileReadLine, line, movementblock.txt, 1
 if line = 1
 {
+Send {RButton}
 return
 }
 else
 {
-Send {RButton down}
+Send {RButton}
 Send {MButton down}
 sleep 3
-Send {RButton up}
 send {MButton up}
 }
 SetTimer, Bullshit2, 250
@@ -46,15 +46,15 @@ if state = D
 FileReadLine, line, movementblock.txt, 1
 if line = 1
 {
+Send {RButton}
 return
 }
 else
 {
-Send {RButton down}
+Send {RButton}
 Send {MButton down}
 sleep 3
 send {RButton up}
-send {MButton up}
 }
 }
 else 
