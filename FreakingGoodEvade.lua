@@ -583,6 +583,49 @@ function CheckBall(obj)
     end
 end 
 
+local AutoUpdate = true 
+
+    local version = "34"
+    local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
+    local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
+    local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
+    local versionmessage = "<font color=\"#81BEF7\" >Changelog: THE Update that changed the world... Fixed dodging of circular skillshots to perfection, it can't get better unless the spell stats are wrong, line skillshots are almost perfect too, just needs bit more advanced dashing logic.</font>"
+
+    function Update()
+        DownloadFile(URL, UPDATE_TMP_FILE, UpdateCallback)
+    end
+
+    function UpdateCallback()
+        file = io.open(UPDATE_TMP_FILE, "rb")
+        if file ~= nil then
+            content = file:read("*all")
+            file:close()
+            os.remove(UPDATE_TMP_FILE)
+            if content then
+                tmp, sstart = string.find(content, "local version = \"")
+                if sstart then
+                    send, tmp = string.find(content, "\"", sstart+1)
+                end
+                if send then
+                Version = tonumber(string.sub(content, sstart+1, send-1))
+            end
+            if (Version ~= nil) and (Version > tonumber(version)) and content:find("--EOS--") then
+                file = io.open(SELF, "w")
+                if file then
+                    file:write(content)
+                    file:flush()
+                    file:close()
+                    PrintChat("<font color=\"#81BEF7\" >FreakingGoodEvade:</font> <font color=\"#00FF00\">Successfully updated to: v"..Version.."</font>")
+                else
+                    PrintChat("<font color=\"#81BEF7\" >FreakingGoodEvade:</font> <font color=\"#FF0000\">Error updating to new version (v"..Version..")</font>")
+                end
+            elseif (Version ~= nil) and (Version == tonumber(version)) then
+                PrintChat("<font color=\"#81BEF7\" >FreakingGoodEvade:</font> <font color=\"#00FF00\">No updates found, latest version: v"..Version.." </font>")
+            end
+        end
+    end
+end
+
     function OnLoad()
         ball = nil
         GoodEvadeConfig = scriptConfig("Freaking Good Evade", "Freaking Good Evade")
@@ -731,6 +774,9 @@ end
         GoodEvadeConfig.dodgeEnabled = true
         currentbuffer = GoodEvadeConfig.evadeBuffer
         PrintChat(versionmessage)
+        if AutoUpdate then
+            DelayAction(Update, 20)
+        end
     end
 
 
