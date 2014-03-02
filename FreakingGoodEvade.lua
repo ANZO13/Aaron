@@ -206,11 +206,11 @@ class 'CollisionPE'
 
     local AutoUpdate = true 
 
-    local version = "32"
-    local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
+    local version = "33"
+    
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
-    local versionmessage = "<font color=\"#81BEF7\" >Changelog: THE Update that changed the world... Fixed dodging of circular skillshots to perfection, it can't get better unless the spell stats are wrong, line skillshots are almost perfect too, just needs bit more advanced dashing logic.</font>"
+    local versionmessage = "<font color=\"#81BEF7\" >Changelog: Better last movement destination setting for VIP Users, free users soon (need to create object map under mouse first)</font>"
 
     function Update()
         DownloadFile(URL, UPDATE_TMP_FILE, UpdateCallback)
@@ -357,7 +357,7 @@ champions2 = {
         ["Boomerang Blade"] = {name = "BoomerangBlade", spellName = "SivirQ", spellDelay = 250, projectileName = "Sivir_Base_Q_mis.troy", projectileSpeed = 1350, range = 1175, radius = 101, type = "line", cc = "false", collision = "false", shieldnow = "true"},
         }},
     ["Ashe"] = {charName = "Ashe", skillshots = {
-        ["Enchanted Arrow"] = {name = "EnchantedArrow", spellName = "EnchantedCrystalArrow", spellDelay = 250, projectileName = "EnchantedCrystalArrow_mis.troy", projectileSpeed = 1600, range = 25000, radius = 120, type = "line", cc = "true", collision = "false", shieldnow = "true"},
+        ["Enchanted Arrow"] = {name = "EnchantedArrow", spellName = "EnchantedCrystalArrow", spellDelay = 250, projectileName = "Ashe_Base_R_mis.troy", projectileSpeed = 1600, range = 25000, radius = 120, type = "line", cc = "true", collision = "false", shieldnow = "true"},
         }},
     ["KogMaw"] = {charName = "KogMaw", skillshots = {
         ["Living Artillery"] = {name = "LivingArtillery", spellName = "KogMawLivingArtillery", spellDelay = 250, projectileName = "KogMawLivingArtillery_mis.troy", projectileSpeed = 1050, range = 2200, radius = 225, type = "circular", cc = "false", collision = "false", shieldnow = "true"}
@@ -486,6 +486,7 @@ alreadywritten = false
 thatfile = SCRIPT_PATH.."movementblock.txt"
 currentbuffer = 0
 bufferset = false
+lastnonattack = 0
 
 function getTarget(targetId)
     if targetId ~= 0 and targetId ~= nil then
@@ -500,9 +501,18 @@ if VIP_USER then
     if packet:get('name') == 'S_MOVE' then
         if packet:get('sourceNetworkId') == myHero.networkID then
             if captureMovements then
+                if packet:get('targetNetworkId') == 0 then
                 lastMovement.destination = Point2(packet:get('x'), packet:get('y'))
                 lastMovement.type = packet:get('type')
                 lastMovement.targetId = packet:get('targetNetworkId')
+                lastnonattack = GetTickCount()
+                end
+            elseif lastnonattack + 1000 < GetTickCount() then
+                lastMovement.destination = Point2(packet:get('x'), packet:get('y'))
+                lastMovement.type = packet:get('type')
+                lastMovement.targetId = packet:get('targetNetworkId')
+                lastnonattack = GetTickCount()
+            end
 
                 if evading then
                     for i, detectedSkillshot in pairs(detectedSkillshots) do
@@ -518,7 +528,7 @@ if VIP_USER then
             end          
         end
     elseif packet:get('name') == 'S_CAST' then
-        if captureMovements then
+        if captureMovements and lastnonattack + 1000 < GetTickCount() then
             lastMovement.spellId = packet:get('spellId')
             lastMovement.type = 7
             lastMovement.targetId = packet:get('targetNetworkId')
@@ -548,6 +558,7 @@ function getLastMovementDestination()
     if VIP_USER then
         if lastMovement.type == 3 then
             heroPosition = Point2(myHero.x, myHero.z)
+            mousePos = Point2(mousePos.x, mousePos.z)
 
             target = getTarget(lastMovement.targetId)
             if _isValidTarget(target) then
@@ -558,14 +569,14 @@ function getLastMovementDestination()
                 if attackRange <= heroPosition:distance(targetPosition) then
                     return targetPosition + (heroPosition - targetPosition):normalized() * attackRange
                 else
-                    return heroPosition
+                    return mousePos
                 end
             else
-                return heroPosition
+                return mousePos
             end
         elseif lastMovement.type == 7 then
             heroPosition = Point2(myHero.x, myHero.z)
-
+            mousePos = Point2(mousePos.x, mousePos.z)
             target = getTarget(lastMovement.targetId)
             if _isValidTarget(target) then
                 targetPosition = Point2(target.x, target.z)
@@ -575,7 +586,7 @@ function getLastMovementDestination()
                 if castRange <= heroPosition:distance(targetPosition) then
                     return targetPosition + (heroPosition - targetPosition):normalized() * castRange
                 else
-                    return heroPosition
+                    return mousePos
                 end
             else
                 local castRange = myHero:GetSpellData(lastMovement.spellId).range
@@ -583,7 +594,7 @@ function getLastMovementDestination()
                 if castRange <= heroPosition:distance(lastMovement.destination) then
                     return lastMovement.destination + (heroPosition - lastMovement.destination):normalized() * castRange
                 else
-                    return heroPosition
+                    return mousePos
                 end
             end
         else
@@ -893,7 +904,6 @@ function _isDangerSkillshot(skillshot)
         or skillshot.skillshot.name == "TrueshotBarrage"
         or skillshot.skillshot.name == "RocketGrab"
         or skillshot.skillshot.name == "DredgeLine"
-        or skillshot.skillshot.name == "EnchantedArrow"
         or skillshot.skillshot.name == "ShadowDash"
         or skillshot.skillshot.name == "FizzULT"
         or skillshot.skillshot.name == "VarusR"
@@ -913,7 +923,7 @@ function isreallydangerous(skillshot)
     if skillshot.skillshot.name == "UFSlash"
         or skillshot.skillshot.name == "Crescendo"
         or skillshot.skillshot.name == "FizzULT"
-        or skillshot.skillshot.name == "Enchanted Arrow"
+        or skillshot.skillshot.name == "EnchantedArrow"
         or skillshot.skillshot.name == "AnnieR"
         or skillshot.skillshot.name == "OrianaDetonateCommand"
         then return true
@@ -1708,7 +1718,7 @@ function OnWndMsg(msg, key)
             end
         end
         lastMovement.destination = Point2(mousePos.x, mousePos.z)
-    end
+    end 
 end
 end
 -- beggining of circular skillshot dodging functions --
