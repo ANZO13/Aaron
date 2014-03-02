@@ -6,7 +6,7 @@ alreadyrun := 0
 canrun := 0
 canrun2 := 0
 Hotkey, IfWinActive, League of Legends (TM) Client
-Hotkey, RButton, Bullshit
+Hotkey, $RButton, Bullshit
 
 Bullshit:
 {
