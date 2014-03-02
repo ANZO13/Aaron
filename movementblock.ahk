@@ -54,7 +54,7 @@ else
 Send {RButton}
 Send {MButton down}
 sleep 3
-send {RButton up}
+send {MButton up}
 }
 }
 else 
