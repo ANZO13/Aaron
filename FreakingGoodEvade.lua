@@ -460,7 +460,7 @@ if VIP_USER then
     if packet:get('name') == 'S_MOVE' then
         if packet:get('sourceNetworkId') == myHero.networkID then
             if captureMovements then
-                if packet:get('targetNetworkId') == 0 then
+                if packet:get('targetNetworkId') == "0" then
                 lastMovement.destination = Point2(packet:get('x'), packet:get('y'))
                 lastMovement.type = packet:get('type')
                 lastMovement.targetId = packet:get('targetNetworkId')
@@ -469,7 +469,6 @@ if VIP_USER then
                 lastMovement.destination = Point2(packet:get('x'), packet:get('y'))
                 lastMovement.type = packet:get('type')
                 lastMovement.targetId = packet:get('targetNetworkId')
-                lastnonattack = GetTickCount()
             end
 
                 if evading then
@@ -513,10 +512,11 @@ end
 end
 
 function getLastMovementDestination()
+    mousePosition = Point2(mousePos.x, mousePos.z)
     if VIP_USER then
         if lastMovement.type == 3 then
             heroPosition = Point2(myHero.x, myHero.z)
-            mousePos = Point2(mousePos.x, mousePos.z)
+            mousePosition = Point2(mousePos.x, mousePos.z)
 
             target = getTarget(lastMovement.targetId)
             if _isValidTarget(target) then
@@ -527,14 +527,14 @@ function getLastMovementDestination()
                 if attackRange <= heroPosition:distance(targetPosition) then
                     return targetPosition + (heroPosition - targetPosition):normalized() * attackRange
                 else
-                    return mousePos
+                    return mousePosition
                 end
             else
-                return mousePos
+                return mousePosition
             end
         elseif lastMovement.type == 7 then
             heroPosition = Point2(myHero.x, myHero.z)
-            mousePos = Point2(mousePos.x, mousePos.z)
+            mousePosition = Point2(mousePos.x, mousePos.z)
             target = getTarget(lastMovement.targetId)
             if _isValidTarget(target) then
                 targetPosition = Point2(target.x, target.z)
@@ -544,7 +544,7 @@ function getLastMovementDestination()
                 if castRange <= heroPosition:distance(targetPosition) then
                     return targetPosition + (heroPosition - targetPosition):normalized() * castRange
                 else
-                    return mousePos
+                    return mousePosition
                 end
             else
                 local castRange = myHero:GetSpellData(lastMovement.spellId).range
@@ -552,7 +552,7 @@ function getLastMovementDestination()
                 if castRange <= heroPosition:distance(lastMovement.destination) then
                     return lastMovement.destination + (heroPosition - lastMovement.destination):normalized() * castRange
                 else
-                    return mousePos
+                    return mousePosition
                 end
             end
         else
@@ -576,7 +576,7 @@ function CheckBall(obj)
 
     if obj.name:find("Oriana_Ghost_bind") then
         for i, target in pairs(enemyes) do
-            if GetDistance(target, obj) < 50 then
+            if GetDistance(target, obj) < 40 then
                 ball = target
            end
         end
@@ -585,7 +585,7 @@ end
 
 local AutoUpdate = true 
 
-    local version = "34"
+    local version = "35"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
