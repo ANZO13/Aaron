@@ -1060,7 +1060,9 @@ function OnCreateObj(object)
     end
 end
 function OnAnimation(unit, animationName)
+if CastingSpell == true then
     if unit.isMe and (animationName == "Idle1" or animationName == "Run") then CastingSpell = false end
+end
 end
 
 function OnProcessSpell(unit, spell)
@@ -1234,10 +1236,6 @@ function OnTick()
             					lastset = GetTickCount() + 100
             				end
             			end
-            			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
-            			end
-            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer then GoodEvadeConfig.evadeBuffer = currentbuffer
-            			bufferset = false
             		end
             	elseif AutoCarry.Keys ~= nil then
             		if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
@@ -1251,10 +1249,6 @@ function OnTick()
             					lastset = GetTickCount() + 100
             				end
             			end
-            			if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
-            			end
-            		elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer then GoodEvadeConfig.evadeBuffer = currentbuffer
-            			bufferset = false
             		end
             	end
             elseif MMA_Loaded ~= nil then
@@ -1269,10 +1263,6 @@ function OnTick()
             				lastset = GetTickCount() + 100
             			end
             		end
-            		if GoodEvadeConfig.evadeBuffer < currentbuffer + 15 then GoodEvadeConfig.evadeBuffer = currentbuffer + 15
-            		end
-            	elseif bufferset and GoodEvadeConfig.evadeBuffer > currentbuffer then GoodEvadeConfig.evadeBuffer = currentbuffer
-            		bufferset = false
             	end
             end
             nSkillshots = 0
