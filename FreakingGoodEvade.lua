@@ -583,9 +583,9 @@ function CheckBall(obj)
     end
 end 
 
-local AutoUpdate = true 
+local AutoUpdate = false 
 
-    local version = "36"
+    local version = "37"
     local SELF =  SCRIPT_PATH..GetCurrentEnv().FILE_NAME
     local URL = "https://bitbucket.org/vitouch/freekings-bol-scripts/raw/master/FreakingGoodEvade.lua"
     local UPDATE_TMP_FILE = LIB_PATH.."FGETmp.txt"
@@ -1168,23 +1168,23 @@ return footOfPerpendicular
 end
 
 function OnTick()
-	if GoodEvadeConfig.freemovementblock then
-		if evading and not alreadywritten then
-			local file = io.open(thatfile, "w")
-			file:write("1")
-			file:close()
-			alreadywritten = true
-		elseif not evading and alreadywritten then
-			local file = io.open(thatfile, "w")
-			file:write("0")
-			file:close()
-			alreadywritten = false
-		end
-		if not wrotedisclaimer then
-			PrintChat("<font color=\"#FF0000\" >You just enabled free user movement block, this function will only work if you followed tutorial in main thread of the script before allowing it.</font>")
-		wrotedisclaimer = true
-		end
-	end
+    if GoodEvadeConfig.freemovementblock then
+        if evading and not alreadywritten then
+            local file = io.open(thatfile, "w")
+            file:write("1")
+            file:close()
+            alreadywritten = true
+        elseif not evading and alreadywritten then
+            local file = io.open(thatfile, "w")
+            file:write("0")
+            file:close()
+            alreadywritten = false
+        end
+        if not wrotedisclaimer then
+            PrintChat("<font color=\"#FF0000\" >You just enabled free user movement block, this function will only work if you followed tutorial in main thread of the script before allowing it.</font>")
+        wrotedisclaimer = true
+        end
+    end
         if skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= GoodEvadeConfig.fowdelay and skillshotToAdd.startPosition == nil then
             skillshotToAdd.startPosition = Point2(skillshotToAdd.object.x, skillshotToAdd.object.z)
         elseif skillshotToAdd ~= nil and skillshotToAdd.object ~= nil and skillshotToAdd.object.valid and (GetTickCount() - skillshotToAdd.startTick) >= (GoodEvadeConfig.fowdelay+1) then
@@ -1223,47 +1223,47 @@ function OnTick()
                 detectedSkillshots = {}
             end
             if AutoCarry ~= nil then
-            	if AutoCarry.MainMenu ~= nil then 
-            		if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
-            			then
-            			if not bufferset then
-            				currentbuffer = GoodEvadeConfig.evadeBuffer
-            				bufferset = true
-            			end
-            			if not VIP_USER then
-            				if lastset < GetTickCount()
-            					then lastMovement.destination = Point2(mousePos.x, mousePos.z)
-            					lastset = GetTickCount() + 100
-            				end
-            			end
-            		end
-            	elseif AutoCarry.Keys ~= nil then
-            		if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
-            			if not bufferset then
-            				currentbuffer = GoodEvadeConfig.evadeBuffer
-            				bufferset = true
-            			end
-            			if not VIP_USER then
-            				if lastset < GetTickCount()
-            					then lastMovement.destination = Point2(mousePos.x, mousePos.z)
-            					lastset = GetTickCount() + 100
-            				end
-            			end
-            		end
-            	end
+                if AutoCarry.MainMenu ~= nil then 
+                    if AutoCarry.MainMenu.AutoCarry or AutoCarry.MainMenu.LastHit or AutoCarry.MainMenu.MixedMode or AutoCarry.MainMenu.LaneClear
+                        then
+                        if not bufferset then
+                            currentbuffer = GoodEvadeConfig.evadeBuffer
+                            bufferset = true
+                        end
+                        if not VIP_USER then
+                            if lastset < GetTickCount()
+                                then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+                                lastset = GetTickCount() + 100
+                            end
+                        end
+                    end
+                elseif AutoCarry.Keys ~= nil then
+                    if AutoCarry.Keys.AutoCarry or AutoCarry.Keys.MixedMode or AutoCarry.Keys.LastHit or AutoCarry.Keys.LaneClear then
+                        if not bufferset then
+                            currentbuffer = GoodEvadeConfig.evadeBuffer
+                            bufferset = true
+                        end
+                        if not VIP_USER then
+                            if lastset < GetTickCount()
+                                then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+                                lastset = GetTickCount() + 100
+                            end
+                        end
+                    end
+                end
             elseif MMA_Loaded ~= nil then
-            	if _G.MMA_Orbwalker or _G.MMA_HybridMode or _G.MMA_LaneClear or _G.MMA_LastHit then
-            		if not bufferset then
-            			currentbuffer = GoodEvadeConfig.evadeBuffer
-            			bufferset = true
-            		end
-            		if not VIP_USER then
-            			if lastset < GetTickCount()
-            				then lastMovement.destination = Point2(mousePos.x, mousePos.z)
-            				lastset = GetTickCount() + 100
-            			end
-            		end
-            	end
+                if _G.MMA_Orbwalker or _G.MMA_HybridMode or _G.MMA_LaneClear or _G.MMA_LastHit then
+                    if not bufferset then
+                        currentbuffer = GoodEvadeConfig.evadeBuffer
+                        bufferset = true
+                    end
+                    if not VIP_USER then
+                        if lastset < GetTickCount()
+                            then lastMovement.destination = Point2(mousePos.x, mousePos.z)
+                            lastset = GetTickCount() + 100
+                        end
+                    end
+                end
             end
             nSkillshots = 0
             for _, detectedSkillshot in pairs(detectedSkillshots) do
@@ -1656,7 +1656,7 @@ end
 function startEvade()
     allowCustomMovement = false
     if AutoCarry 
-    	then if AutoCarry.MainMenu ~= nil then
+        then if AutoCarry.MainMenu ~= nil then
         if AutoCarry.CanAttack ~= nil then
      _G.AutoCarry.CanAttack = false
      _G.AutoCarry.CanMove = false
@@ -1668,8 +1668,8 @@ function startEvade()
 end
 end
 elseif MMA_Loaded then
-	_G.MMA_AttackAvailable = false
-	_G.MMA_AbleToMove = false
+    _G.MMA_AttackAvailable = false
+    _G.MMA_AbleToMove = false
 end
 _G.evade = true
 evading = true
@@ -1689,8 +1689,8 @@ function stopEvade()
 end
 end
 elseif MMA_Loaded then
-	_G.MMA_AttackAvailable = true
-	_G.MMA_AbleToMove = true
+    _G.MMA_AttackAvailable = true
+    _G.MMA_AbleToMove = true
 end
 _G.evade = false
 evading = false
